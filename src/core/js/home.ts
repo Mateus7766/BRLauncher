@@ -13,6 +13,7 @@ class HomePage extends PageBase {
             pageName: 'home'
         })
         console.log("[CLIENT SIDE] A HOME FOI CARREGADA")
+        // this.getInstalledVersions()
     }
 
     async init() {
@@ -26,13 +27,15 @@ class HomePage extends PageBase {
         })
     }
 
-    /* private async getInstalledVersions(){
-        const launcherSettings = await LauncherDB.config()
-        // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
-        let versions = readdirSync(`${launcherSettings?.path}\\versions`)
-        console.log(versions)
+    // private async getInstalledVersions(){
+    //     const launcherSettings = await LauncherDB.config()
+    //     // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
+    //     let versions = readdirSync(`${launcherSettings?.path}\\versions`)
+    //     for(let version of versions){
+    //         console.log(version)
+    //     }
         
-    } */
+    // }
 
     private async getNeoForgeVersions(){
         // not implemented

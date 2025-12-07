@@ -41,13 +41,16 @@ class Launcher extends minecraft_java_core_1.Launch {
                 detached: false,
                 downloadFileMultiple: 100,
                 loader: {
+                    path: "./loaders",
                     type: type,
                     build: "latest",
                     enable: !(type == 'vanilla')
                 },
                 verify: false,
                 ignored: ['loader', 'options.txt'],
-                javaPath: settings.javaPath,
+                java: {
+                    type: "jdk",
+                },
                 screen: {
                     width: settings.width,
                     height: settings.height,
@@ -58,7 +61,8 @@ class Launcher extends minecraft_java_core_1.Launch {
                 },
                 url: null,
                 JVM_ARGS: [],
-                GAME_ARGS: []
+                GAME_ARGS: [],
+                mcp: undefined
             });
         });
     }

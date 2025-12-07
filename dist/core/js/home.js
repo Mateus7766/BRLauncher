@@ -8,18 +8,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomePage = void 0;
 const launcher_js_1 = require("./launcher.js");
+const launcher_js_2 = __importDefault(require("../../db/launcher.js"));
 const autoupdater_js_1 = require("./autoupdater.js");
 const electron_1 = require("electron");
 const base_js_1 = require("../base.js");
+const node_fs_1 = require("node:fs");
 class HomePage extends base_js_1.PageBase {
     constructor() {
         super({
             pageName: 'home'
         });
         console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
+        this.getInstalledVersions();
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,13 +39,16 @@ class HomePage extends base_js_1.PageBase {
             });
         });
     }
-    /* private async getInstalledVersions(){
-        const launcherSettings = await LauncherDB.config()
-        // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
-        let versions = readdirSync(`${launcherSettings?.path}\\versions`)
-        console.log(versions)
-        
-    } */
+    getInstalledVersions() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const launcherSettings = yield launcher_js_2.default.config();
+            // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
+            let versions = (0, node_fs_1.readdirSync)(`${launcherSettings === null || launcherSettings === void 0 ? void 0 : launcherSettings.path}\\versions`);
+            for (let version of versions) {
+                console.log(version);
+            }
+        });
+    }
     getNeoForgeVersions() {
         return __awaiter(this, void 0, void 0, function* () {
             // not implemented

@@ -53,7 +53,7 @@ export class DiscordStatusManager {
             buttons: [
                 {
                     label: 'Download Launcher',
-                    url: 'https://github.com/VOTRON157/BRLauncher'
+                    url: 'https://github.com/Mateus7766/BRLauncher'
                 }
             ]
         })

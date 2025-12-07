@@ -28,6 +28,7 @@ class Launcher extends Launch {
             detached: false,
             downloadFileMultiple: 100,
             loader: {
+                path: "./loaders",
                 type: type,
                 build: "latest",
                 enable: !(type == 'vanilla')
@@ -35,7 +36,9 @@ class Launcher extends Launch {
 
             verify: false,
             ignored: ['loader', 'options.txt'],
-            javaPath: settings.javaPath as string,
+            java: {
+                type: "jdk",
+            },
             screen: {
                 width: settings.width,
                 height: settings.height,
@@ -47,7 +50,8 @@ class Launcher extends Launch {
             },
             url: null,
             JVM_ARGS: [],
-            GAME_ARGS: []
+            GAME_ARGS: [],
+            mcp: undefined
         })
     }
 
