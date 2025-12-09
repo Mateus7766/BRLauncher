@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "VOTRON157",
+  "author": "Mateus7766",
   "license": "MIT",
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.1.0",
