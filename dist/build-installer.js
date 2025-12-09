@@ -24,7 +24,7 @@ console.log('Limpando banco de dados para produção... 🚯');
         description: config_1.default.app_des,
         exe: config_1.default.app_name,
         name: config_1.default.app_name,
-        manufacturer: 'VOTRON157',
+        manufacturer: 'Mateus7766',
         version: process.env.npm_package_version,
         ui: {
             chooseDirectory: true
