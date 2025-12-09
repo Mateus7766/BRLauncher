@@ -8,7 +8,7 @@
     "setup": "npx ts-node src/build-installer",
     "build:css:dev": "npx tailwindcss -i ./src/core/css/input.css -o ./src/core/css/style.css --watch",
     "build:css": "npx tailwindcss -i ./src/core/css/input.css -o ./src/core/css/style.css",
-    "start": "tsc && ts-node src/exclude/pre.ts && electron dist/index.js",
+    "start": "tsc && ts-node src/exclude/pre.ts && electron dist/initdb.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

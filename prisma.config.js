@@ -2,6 +2,8 @@
 // npm install --save-dev prisma dotenv
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
+import getAppDataPath from "appdata-path"
+import { join } from "node:path";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -9,6 +11,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: 'file:./prisma/dev.db',
+    url:  `file:${join(getAppDataPath('brlauncher'), "dev.db")}`
   },
 });
