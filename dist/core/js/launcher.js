@@ -33,6 +33,13 @@ class Launcher extends minecraft_java_core_1.Launch {
             if (!settings)
                 return;
             const auth = yield account_js_1.default.getAtual();
+            if (auth.type == "Microsoft") {
+                const json = this.convert(auth);
+                const newAuth = yield new minecraft_java_core_1.Microsoft('00000000402b5328').refresh(json);
+                // terminar isso aqui   // Account.update(auth.id, {
+                //     newAuth
+                // })
+            }
             yield this.Launch({
                 authenticator: this.convert(auth),
                 timeout: 10000,

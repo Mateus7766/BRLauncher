@@ -6,3 +6,4 @@ package-lock.json
 /BRLauncher-win32-x64
 /windows_installer
 .env
+/generated/prisma

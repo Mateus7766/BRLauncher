@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const ipcHandlers_js_1 = require("./core/js/ipcHandlers.js");
 const path_1 = require("path");
+require("./db/ipcDatabase.js");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const pages = (0, path_1.join)(__dirname, "pages");
@@ -33,7 +34,7 @@ function createWindow() {
         });
         win.loadFile((0, path_1.join)(pages, "index.html"));
         win.removeMenu();
-        // win.webContents.openDevTools()
+        win.webContents.openDevTools();
         (0, ipcHandlers_js_1.initIPCHandlers)();
     });
 }

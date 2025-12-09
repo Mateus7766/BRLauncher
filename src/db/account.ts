@@ -1,63 +1,23 @@
-import { prisma } from "./index"
-import { AccountCreate } from "../interfaces/launcher"
+import { ipcRenderer } from "electron"
 
-class Account {
+export const Account = {
+  update: (id: number, data: any) =>
+   ipcRenderer.invoke("account:update", { id, data }),
 
-    async update(id: number, data: object){
-        const account = await prisma.account.update({
-          where: {
-            id: id
-          },
-          data,
-        })
-        return account
-    }
+  create: (data: any) =>
+   ipcRenderer.invoke("account:create", data),
 
-    async create(data: AccountCreate) {
-        const createdAccount = await prisma.account.create({
-            data: {
-                access_token: data.access_token,
-                client_token: data.client_token,
-                uuid: data.uuid,
-                user_properties: JSON.stringify(data.user_properties),
-                meta: JSON.stringify(data.meta),
-                name: data.name,
-                selected: false
-            }
-        })
-        return createdAccount
-    }
+  delete: (id: number) =>
+   ipcRenderer.invoke("account:delete", id),
 
-    async delete(id: number){
-        const deletedAccount = await prisma.account.delete({
-            where: {
-                id: id
-            }
-        })
-        return deletedAccount
-    }
+  getById: (id: number) =>
+   ipcRenderer.invoke("account:getById", id),
 
-    async getById(id: number){
-        const account = await prisma.account.findUnique({
-            where: {
-                id: id,
-            }
-        })
-        return account
-    }
+  getAtual: () =>
+   ipcRenderer.invoke("account:getAtual"),
 
-    async getAtual(){
-        const account = await prisma.account.findFirst({
-            where: {
-                selected: true
-            }
-        })
-        return account
-    }
-    async accounts(){
-        const accounts = await prisma.account.findMany({})
-        return accounts
-    }
+  accounts: () =>
+   ipcRenderer.invoke("account:accounts")
 }
 
-export default new Account()
+export default Account

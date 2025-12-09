@@ -1,33 +1,30 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
 }
 
-
-model Account { // Representa uma conta dentro do launcher
-  id Int @id @default(autoincrement())
-  access_token String
-  client_token String
-  meta String
+model Account {
+  id              Int     @id @default(autoincrement())
+  access_token    String
+  client_token    String
+  meta            String
   user_properties String
-  uuid String
-  name String
-  selected Boolean
+  uuid            String
+  name            String
+  selected        Boolean
+  type            String
 }
 
-model Launcher { // Configurações do launcher
-  path String
-  id Int @id @default(autoincrement())
-  width Int
-  height Int
-  min Int
-  max Int
+model Launcher {
+  path     String
+  id       Int     @id @default(autoincrement())
+  width    Int
+  height   Int
+  min      Int
+  max      Int
   javaPath String?
 }

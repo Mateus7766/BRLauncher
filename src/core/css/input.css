@@ -12,8 +12,11 @@
     .sidebar-icon-active {
         @apply text-blue-600
     }
+    .microsoft-btn {
+        @apply bg-blue-600 px-5 py-2 text-white flex items-center gap-3
+    }
     .play-btn {
-        @apply text-white px-5 py-2 bg-zinc-900 duration-200 mt-5 flex items-center gap-3
+        @apply text-white px-5 py-2 bg-zinc-900 duration-200 flex items-center gap-3
     }
     .play-btn:hover {
         @apply bg-green-500

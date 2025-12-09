@@ -5,15 +5,13 @@ import { FabricAPI, MineAPI, QuiltAPI, NeoForgeAPI } from "../../interfaces/laun
 import { AutoUpdater } from "./autoupdater.js"
 import { ipcRenderer } from "electron"
 import { PageBase } from "../base.js"
-import { readdirSync } from "node:fs"
-
+import { Microsoft } from "minecraft-java-core";
 class HomePage extends PageBase {
     constructor() {
         super({
             pageName: 'home'
         })
-        console.log("[CLIENT SIDE] A HOME FOI CARREGADA")
-        // this.getInstalledVersions()
+        console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
     }
 
     async init() {
@@ -24,7 +22,7 @@ class HomePage extends PageBase {
             this.startLauncher()
             play.innerHTML = '<span class="material-icons">play_disabled</span> Instalando...'
             play.disabled = true
-        })
+        });
     }
 
     // private async getInstalledVersions(){
@@ -38,8 +36,9 @@ class HomePage extends PageBase {
     // }
 
     private async getNeoForgeVersions() {
-        const tempArray: string[] = []
-        let neoforge = (await (await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json() as NeoForgeAPI).versions.map(version => {
+        const tempArray: string[] = [];
+       
+        (await (await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json() as NeoForgeAPI).versions.map(version => {
             version = version.split(".").slice(0, 2).join(".")
             if (!tempArray.includes(version)) tempArray.push(version)
         })
@@ -126,7 +125,7 @@ class HomePage extends PageBase {
 
         const barra = document.getElementById('barra') as HTMLElement
         barra.style.padding = "0.25rem"
-        
+
         launcher.on("progress", (progress: any, size: any, element: any) => {
             const porcentagem = Math.round((progress / size) * 100)
             barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
@@ -142,6 +141,7 @@ class HomePage extends PageBase {
         launcher.on("error", (err: any) => {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
             barra.style.width = `100%`
+            barra.style.padding = "0.25rem"
         })
 
         launcher.on('data', (data: any) => {

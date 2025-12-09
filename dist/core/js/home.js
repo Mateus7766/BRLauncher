@@ -20,7 +20,6 @@ class HomePage extends base_js_1.PageBase {
             pageName: 'home'
         });
         console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
-        // this.getInstalledVersions()
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,7 +44,7 @@ class HomePage extends base_js_1.PageBase {
     getNeoForgeVersions() {
         return __awaiter(this, void 0, void 0, function* () {
             const tempArray = [];
-            let neoforge = (yield (yield fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json()).versions.map(version => {
+            (yield (yield fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json()).versions.map(version => {
                 version = version.split(".").slice(0, 2).join(".");
                 if (!tempArray.includes(version))
                     tempArray.push(version);
@@ -142,6 +141,7 @@ class HomePage extends base_js_1.PageBase {
         launcher.on("error", (err) => {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`;
             barra.style.width = `100%`;
+            barra.style.padding = "0.25rem";
         });
         launcher.on('data', (data) => {
             barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>';

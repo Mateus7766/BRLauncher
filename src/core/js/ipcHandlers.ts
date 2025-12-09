@@ -1,5 +1,6 @@
 import { ipcMain, BrowserWindow, dialog } from "electron";
 import { DiscordStatusManager } from "./discordStatus.js";
+import { Microsoft } from "minecraft-java-core";
 
 
 const discord = new DiscordStatusManager()
@@ -24,6 +25,11 @@ const initIPCHandlers = () => {
         return path
     });
     ipcMain.handle('openDevtools', () => BrowserWindow.getFocusedWindow()?.webContents.openDevTools());
+    ipcMain.handle('loginMicrosoft', async (event, clientId: string) => {
+        const microsoft = new Microsoft(clientId);
+        const auth = await microsoft.getAuth();
+        return auth;
+    });
 }
 
 export {

@@ -1,8 +1,10 @@
 import { app, BrowserWindow } from "electron";
 import { initIPCHandlers } from "./core/js/ipcHandlers.js";
 import { join } from "path";
+import "./db/ipcDatabase.js"
 import dotenv from "dotenv"
 dotenv.config()
+
 
 const pages = join(__dirname, "pages");
 
@@ -18,10 +20,10 @@ async function createWindow() {
       preload: join(__dirname, 'core', "app.js"),
     },
   });
-
+  
   win.loadFile(join(pages, "index.html"));
   win.removeMenu();
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
   initIPCHandlers()
 }
 

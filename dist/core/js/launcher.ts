@@ -1,4 +1,4 @@
-import { Launch } from "minecraft-java-core"
+import { Launch, Microsoft } from "minecraft-java-core"
 import LauncherSettings from "../../db/launcher.js"
 import Account from "../../db/account.js"
 
@@ -16,10 +16,16 @@ class Launcher extends Launch {
         }
 
         const settings = await LauncherSettings.config()
-        if(!settings) return
+        if (!settings) return
 
         const auth = await Account.getAtual()
-
+        if(auth.type == "Microsoft"){
+            const json = this.convert(auth)
+            const newAuth = await new Microsoft('00000000402b5328').refresh(json)
+         // terminar isso aqui   // Account.update(auth.id, {
+            //     newAuth
+            // })
+        }
         await this.Launch({
             authenticator: this.convert(auth),
             timeout: 10000,
@@ -55,7 +61,7 @@ class Launcher extends Launch {
         })
     }
 
-    convert(account_connect: any){
+    convert(account_connect: any) {
         return {
             access_token: account_connect.access_token,
             client_token: account_connect.client_token,

@@ -64,6 +64,7 @@ export interface AccountCreate {
     uuid: string,
     name: string,
     user_properties: {},
+    type: string
     meta: {
         type: string,
         online: boolean
