@@ -57,7 +57,7 @@ class Launcher extends minecraft_java_core_1.Launch {
                 alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.");
             }
             const jvmArgs = [];
-            const authLibPath = path_1.default.join(process.cwd(), "authlib-injector-1.2.6.jar");
+            const authLibPath = path_1.default.join(__dirname, "..", "..", "..", "authlib-injector-1.2.6.jar");
             if (settings.elyBy)
                 jvmArgs.push(`-javaagent:${authLibPath}=ely.by`, '-Dauthlibinjector.side=client');
             yield this.Launch({
