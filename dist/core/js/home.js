@@ -8,24 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomePage = void 0;
 const launcher_js_1 = require("./launcher.js");
-const launcher_js_2 = __importDefault(require("../../db/launcher.js"));
 const autoupdater_js_1 = require("./autoupdater.js");
 const electron_1 = require("electron");
 const base_js_1 = require("../base.js");
-const node_fs_1 = require("node:fs");
 class HomePage extends base_js_1.PageBase {
     constructor() {
         super({
             pageName: 'home'
         });
         console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
-        this.getInstalledVersions();
+        // this.getInstalledVersions()
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,19 +34,25 @@ class HomePage extends base_js_1.PageBase {
             });
         });
     }
-    getInstalledVersions() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const launcherSettings = yield launcher_js_2.default.config();
-            // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
-            let versions = (0, node_fs_1.readdirSync)(`${launcherSettings === null || launcherSettings === void 0 ? void 0 : launcherSettings.path}\\versions`);
-            for (let version of versions) {
-                console.log(version);
-            }
-        });
-    }
+    // private async getInstalledVersions(){
+    //     const launcherSettings = await LauncherDB.config()
+    //     // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
+    //     let versions = readdirSync(`${launcherSettings?.path}\\versions`)
+    //     for(let version of versions){
+    //         console.log(version)
+    //     }
+    // }
     getNeoForgeVersions() {
         return __awaiter(this, void 0, void 0, function* () {
-            // not implemented
+            const tempArray = [];
+            let neoforge = (yield (yield fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json()).versions.map(version => {
+                version = version.split(".").slice(0, 2).join(".");
+                if (!tempArray.includes(version))
+                    tempArray.push(version);
+            });
+            tempArray.shift();
+            console.log(tempArray);
+            return tempArray;
         });
     }
     getQuiltVersions() {
@@ -98,14 +99,14 @@ class HomePage extends base_js_1.PageBase {
             const fabric = yield this.getFabricVersions();
             const forge = yield this.getForgeVersions();
             const quilt = yield this.getQuiltVersions();
-            // const installed = await this.getInstalledVersions()
+            const neoforge = yield this.getNeoForgeVersions();
             const options = document.getElementById('options');
             for (let version of vanilla) {
-                // const installedDiv = this.returnOptionElement('installed', version)
                 const forgeDiv = this.returnOptionElement('forge', version);
                 const fabricDiv = this.returnOptionElement('fabric', version);
                 const vanillaDiv = this.returnOptionElement('vanilla', version);
                 const quiltDiv = this.returnOptionElement('quilt', version);
+                const neoforgeDiv = this.returnOptionElement('neoforge', version);
                 options.appendChild(vanillaDiv);
                 if (fabric.includes(version)) {
                     options.appendChild(fabricDiv);
@@ -116,6 +117,9 @@ class HomePage extends base_js_1.PageBase {
                 if (quilt.includes(version)) {
                     options.appendChild(quiltDiv);
                 }
+                if (neoforge.includes(version.split(".").slice(1, 3).join("."))) {
+                    options.appendChild(neoforgeDiv);
+                }
             }
         });
     }
@@ -124,19 +128,20 @@ class HomePage extends base_js_1.PageBase {
         const launcher = new launcher_js_1.Launcher();
         launcher.init(version, type);
         const barra = document.getElementById('barra');
+        barra.style.padding = "0.25rem";
         launcher.on("progress", (progress, size, element) => {
             const porcentagem = Math.round((progress / size) * 100);
-            barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1000000).toPrecision(2)}/${(size / 1000000).toPrecision(2)} MB`;
+            barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`;
             barra.style.width = `${porcentagem}%`;
         });
         launcher.on("check", (progress, size, element) => {
             const porcentagem = Math.round((progress / size) * 100);
-            barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1000000).toPrecision(2)}/${(size / 1000000).toPrecision(2)} MB`;
+            barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`;
             barra.style.width = `${porcentagem}%`;
         });
         launcher.on("error", (err) => {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`;
-            // alert(JSON.stringify(err))
+            barra.style.width = `100%`;
         });
         launcher.on('data', (data) => {
             barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>';
@@ -148,6 +153,7 @@ class HomePage extends base_js_1.PageBase {
         });
         launcher.on('close', (code) => {
             barra.style.width = '0%';
+            barra.style.padding = "0px";
             const play = document.getElementById('play');
             play.disabled = false;
             play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar';

@@ -38,6 +38,7 @@ class AutoUpdater extends events_1.default {
         })
             .then((res) => res.json())
             .then((json) => __awaiter(this, void 0, void 0, function* () {
+            console.log(json);
             if (semver_1.default.lt(version, json.version))
                 this.emit("update-found");
             else

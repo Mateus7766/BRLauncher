@@ -49,6 +49,11 @@ export interface Config {
     fullScreen: boolean
 }
 
+export interface NeoForgeAPI {
+    isSnapshot: boolean
+    versions: string[]
+}
+
 export interface ConfigPage {
     pageName: string
 }

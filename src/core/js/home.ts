@@ -1,7 +1,7 @@
 import axios from "axios"
 import { Launcher } from "./launcher.js"
 import LauncherDB from "../../db/launcher.js";
-import { FabricAPI, MineAPI, QuiltAPI } from "../../interfaces/launcher.js"
+import { FabricAPI, MineAPI, QuiltAPI, NeoForgeAPI } from "../../interfaces/launcher.js"
 import { AutoUpdater } from "./autoupdater.js"
 import { ipcRenderer } from "electron"
 import { PageBase } from "../base.js"
@@ -34,14 +34,21 @@ class HomePage extends PageBase {
     //     for(let version of versions){
     //         console.log(version)
     //     }
-        
+
     // }
 
-    private async getNeoForgeVersions(){
-        // not implemented
+    private async getNeoForgeVersions() {
+        const tempArray: string[] = []
+        let neoforge = (await (await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json() as NeoForgeAPI).versions.map(version => {
+            version = version.split(".").slice(0, 2).join(".")
+            if (!tempArray.includes(version)) tempArray.push(version)
+        })
+        tempArray.shift()
+        console.log(tempArray)
+        return tempArray
     }
 
-    private async getQuiltVersions(){
+    private async getQuiltVersions() {
         let quilt = (await (await fetch("https://meta.quiltmc.org/v3/versions")).json() as QuiltAPI).game.filter(v => v.stable).map(v => v.version)
         return quilt
     }
@@ -62,7 +69,7 @@ class HomePage extends PageBase {
         // https://files.minecraftforge.net/net/minecraftforge/forge/maven-metadata.json
     }
 
-    private returnOptionElement(type: 'forge' | 'fabric' | 'vanilla' | 'quilt', version: string) {
+    private returnOptionElement(type: 'forge' | 'fabric' | 'vanilla' | 'quilt' | 'neoforge', version: string) {
         const div = document.createElement('div')
         div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-blue-500', 'duration-150')
         div.innerHTML = `<img src="../core/imgs/${type}.png" width="30">${type} ${version}`
@@ -82,16 +89,17 @@ class HomePage extends PageBase {
         const fabric = await this.getFabricVersions()
         const forge = await this.getForgeVersions()
         const quilt = await this.getQuiltVersions()
-        // const installed = await this.getInstalledVersions()
+        const neoforge = await this.getNeoForgeVersions()
 
         const options = document.getElementById('options') as HTMLElement
 
         for (let version of vanilla) {
-            // const installedDiv = this.returnOptionElement('installed', version)
             const forgeDiv = this.returnOptionElement('forge', version)
             const fabricDiv = this.returnOptionElement('fabric', version)
             const vanillaDiv = this.returnOptionElement('vanilla', version)
             const quiltDiv = this.returnOptionElement('quilt', version)
+            const neoforgeDiv = this.returnOptionElement('neoforge', version)
+
 
             options.appendChild(vanillaDiv)
 
@@ -101,8 +109,11 @@ class HomePage extends PageBase {
             if (Object.keys(forge).includes(version)) {
                 options.appendChild(forgeDiv)
             }
-            if(quilt.includes(version)) {
+            if (quilt.includes(version)) {
                 options.appendChild(quiltDiv)
+            }
+            if (neoforge.includes(version.split(".").slice(1, 3).join("."))) {
+                options.appendChild(neoforgeDiv)
             }
         }
     }
@@ -111,25 +122,27 @@ class HomePage extends PageBase {
         const [type, version] = (document.getElementById('version') as HTMLInputElement).value.split(' ')
         const launcher = new Launcher()
         launcher.init(version, type)
-       
+
 
         const barra = document.getElementById('barra') as HTMLElement
-
+        barra.style.padding = "0.25rem"
+        
         launcher.on("progress", (progress: any, size: any, element: any) => {
             const porcentagem = Math.round((progress / size) * 100)
-            barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1000000).toPrecision(2)}/${(size / 1000000).toPrecision(2)} MB`
+            barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
             barra.style.width = `${porcentagem}%`
         })
 
         launcher.on("check", (progress: any, size: any, element: any) => {
             const porcentagem = Math.round((progress / size) * 100)
-            barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1000000).toPrecision(2)}/${(size / 1000000).toPrecision(2)} MB`
+            barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
             barra.style.width = `${porcentagem}%`
         })
 
         launcher.on("error", (err: any) => {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
-            // alert(JSON.stringify(err))
+            barra.style.width = `100%`
+            barra.style.padding = "0.25rem"
         })
 
         launcher.on('data', (data: any) => {
@@ -143,6 +156,7 @@ class HomePage extends PageBase {
 
         launcher.on('close', (code: number) => {
             barra.style.width = '0%'
+            barra.style.padding = "0px"
             const play = document.getElementById('play') as HTMLButtonElement
             play.disabled = false
             play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar'
@@ -151,7 +165,7 @@ class HomePage extends PageBase {
     }
 
     initUpdater() {
-        
+
         const autoUpdater = new AutoUpdater()
 
         const updater = document.getElementById("updater") as HTMLDivElement
@@ -186,7 +200,7 @@ class HomePage extends PageBase {
 
             autoUpdater.on("finished", () => {
                 this.notification("O BRLauncher foi atualizado para a versão mais recente. Reabra o launcher para ver as novidades.")
-            }) 
+            })
 
             autoUpdater.on('error', (error) => {
                 console.log(error)

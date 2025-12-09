@@ -1,13 +1,46 @@
+<style>
+    #options::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #options::-webkit-scrollbar-track {
+        background: #18181b;
+        /* zinc-900 */
+        border-radius: 9999px;
+    }
+
+    #options::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        /* zinc-700 */
+        border-radius: 9999px;
+        border: 2px solid #18181b;
+    }
+
+    #options::-webkit-scrollbar-thumb:hover {
+        background: #52525b;
+        /* zinc-600 */
+    }
+
+    /* Firefox */
+    #options {
+        scrollbar-width: thin;
+        scrollbar-color: #3f3f46 #18181b;
+    }
+</style>
+
 <div class="p-3 overflow-y-scroll h-full no-scrollbar">
     <label for="version">Selecione a versão</label>
     <div class="group">
-        <input placeholder="Selecione a versão" class="w-0 bg-zinc-500 outline-none text-white placeholder:ml-1 opacity-0" id="version" value="vanilla 1.20.1">
-        <div class="shadow-md flex items-center gap-x-3 p-2 border-l-4 border-blue-500 duration-150 bg-zinc-900 rounded cursor-pointer" id="fake-select"><img src="../core/imgs/steve.png" width="30">Vanilla 1.20.1</div>
-        <div class="fixed z-10 w-96 group-hover:block hidden bg-zinc-900 shadow overflow-y-scroll h-96" id="options">
-            <!-- <div class="flex items-center gap-x-3 p-2 border-b-1 border-l-0 hover:border-l-4 border-blue-500 duration-150"><img src="../core/imgs/steve.png" width="30">Vanilla 1.20.1</div> -->
+        <input placeholder="Selecione a versão"
+            class="w-0 bg-zinc-500 outline-none text-white placeholder:ml-1 opacity-0" id="version"
+            value="vanilla 1.20.1">
+        <div class="shadow-md flex items-center gap-x-3 p-2 border-l-4 border-blue-500 duration-150 bg-zinc-900 rounded cursor-pointer"
+            id="fake-select"><img src="../core/imgs/steve.png" width="30">Vanilla 1.20.1</div>
+        <div id="options" class="fixed z-10 w-96 group-hover:block hidden bg-zinc-900 shadow overflow-y-scroll h-96">
         </div>
+
     </div>
     <button class="play-btn" id="play"><span class="material-icons">play_circle</span> Instalar e jogar</button>
-    </div>
-    <div class="fixed bottom-0 p-1 w-0 bg-blue-400 h-7 line-clamp-1 duration-700" id="barra"></div>
+</div>
+<div class="fixed bottom-0 p-0 w-0 bg-blue-400 h-7 line-clamp-1 duration-700" id="barra"></div>
 </div>

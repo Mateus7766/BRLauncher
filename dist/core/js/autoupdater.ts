@@ -27,6 +27,7 @@ class AutoUpdater extends (EventEmitter as new () => TypedEmitter<Events>) {
     })
       .then((res) => res.json())
       .then(async (json) => {
+        console.log(json)
         if (semver.lt(version, json.version)) this.emit("update-found")
         else this.emit("update-notavaliable")
       });
