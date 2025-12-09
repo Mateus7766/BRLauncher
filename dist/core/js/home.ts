@@ -43,7 +43,6 @@ class HomePage extends PageBase {
             if (!tempArray.includes(version)) tempArray.push(version)
         })
         tempArray.shift()
-        console.log(tempArray)
         return tempArray
     }
 

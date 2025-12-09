@@ -18,13 +18,22 @@ class Launcher extends Launch {
         const settings = await LauncherSettings.config()
         if (!settings) return
 
-        const auth = await Account.getAtual()
-        if(auth.type == "Microsoft"){
+        let auth = await Account.getAtual()
+        if (auth.type == "Microsoft") {
             const json = this.convert(auth)
             const newAuth = await new Microsoft('00000000402b5328').refresh(json)
-         // terminar isso aqui   // Account.update(auth.id, {
-            //     newAuth
-            // })
+            auth = await Account.update(auth.id, {
+                access_token: newAuth.access_token,
+                client_token: newAuth.client_token,
+                uuid: newAuth.uuid,
+                user_properties: JSON.stringify(newAuth.user_properties),
+                meta: JSON.stringify(newAuth.meta),
+                name: newAuth.name
+            })
+                .catch(e => {
+                    console.log("Erro ao atualizar token Microsoft: " + e)
+                });
+            console.log("[ Microsoft ] Token Microsoft atualizado")
         }
         await this.Launch({
             authenticator: this.convert(auth),

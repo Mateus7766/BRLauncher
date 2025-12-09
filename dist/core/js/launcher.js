@@ -32,13 +32,22 @@ class Launcher extends minecraft_java_core_1.Launch {
             const settings = yield launcher_js_1.default.config();
             if (!settings)
                 return;
-            const auth = yield account_js_1.default.getAtual();
+            let auth = yield account_js_1.default.getAtual();
             if (auth.type == "Microsoft") {
                 const json = this.convert(auth);
                 const newAuth = yield new minecraft_java_core_1.Microsoft('00000000402b5328').refresh(json);
-                // terminar isso aqui   // Account.update(auth.id, {
-                //     newAuth
-                // })
+                auth = yield account_js_1.default.update(auth.id, {
+                    access_token: newAuth.access_token,
+                    client_token: newAuth.client_token,
+                    uuid: newAuth.uuid,
+                    user_properties: JSON.stringify(newAuth.user_properties),
+                    meta: JSON.stringify(newAuth.meta),
+                    name: newAuth.name
+                })
+                    .catch(e => {
+                    console.log("Erro ao atualizar token Microsoft: " + e);
+                });
+                console.log("[ Microsoft ] Token Microsoft atualizado");
             }
             yield this.Launch({
                 authenticator: this.convert(auth),

@@ -27,18 +27,15 @@ class AutoUpdater extends events_1.default {
     }
     checkForUpdates() {
         const version = JSON.parse((0, node_fs_1.readFileSync)(path_1.default.join(__dirname, "..", "..", "..", "package.json"), "utf-8")).version;
-        console.log(version);
-        fetch("https://raw.githubusercontent.com/VOTRON157/BRLauncher/main/package.json", {
+        fetch("https://raw.githubusercontent.com/Mateus7766/BRLauncher/main/package.json", {
             headers: {
-                'Cache-Control': 'no-cache', // Instrui o servidor a não usar o cache
-                'Pragma': 'no-cache', // Outra instrução para não usar o cache (para compatibilidade com navegadores mais antigos)    
-                'Expires': '0',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
             },
             cache: 'no-cache'
         })
             .then((res) => res.json())
             .then((json) => __awaiter(this, void 0, void 0, function* () {
-            console.log(json);
             if (semver_1.default.lt(version, json.version))
                 this.emit("update-found");
             else
@@ -48,11 +45,11 @@ class AutoUpdater extends events_1.default {
     downloadNewVersion() {
         return __awaiter(this, void 0, void 0, function* () {
             this.emit("downloading-zip");
-            const newVersion = "https://github.com/VOTRON157/BRLauncher/archive/refs/heads/main.zip";
+            const newVersion = "https://github.com/Mateus7766/BRLauncher/archive/refs/heads/main.zip";
             const data = yield fetch(newVersion, {
                 headers: {
-                    'Cache-Control': 'no-cache', // Instrui o servidor a não usar o cache
-                    'Pragma': 'no-cache', // Outra instrução para não usar o cache (para compatibilidade com navegadores mais antigos)    
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
                     'Expires': '0',
                 },
                 cache: 'no-cache'

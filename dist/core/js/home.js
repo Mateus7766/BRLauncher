@@ -50,7 +50,6 @@ class HomePage extends base_js_1.PageBase {
                     tempArray.push(version);
             });
             tempArray.shift();
-            console.log(tempArray);
             return tempArray;
         });
     }

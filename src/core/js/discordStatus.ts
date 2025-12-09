@@ -37,25 +37,25 @@ export class DiscordStatusManager {
         })
     }
     setPlaying(version: string) {
-        // presence.setActivity({
-        //     details: `Minecraft ${version.split(" ")[1]}`,
-        //     instance: false,
-        //     state: `Jogando Minecraft ${version.split(" ")[0].replace('fabric', 'Fabric (Modded)').replace('forge', 'Forge (Modded)').replace('vanilla', "Vanilla")}`,
-        //     assets: {
-        //         small_image: version.split(" ")[0],
-        //         small_text: version.split(" ")[1],
-        //         large_image: 'minelogo',
-        //         large_text: 'BRLauncher'
-        //     },
-        //     timestamps: {
-        //         start: this.initDate,
-        //     },
-        //     buttons: [
-        //         {
-        //             label: 'Download Launcher',
-        //             url: 'https://github.com/Mateus7766/BRLauncher'
-        //         }
-        //     ]
-        // })
+        presence.setActivity({
+            details: `Minecraft ${version.split(" ")[1]}`,
+            instance: false,
+            state: `Jogando Minecraft ${version.split(" ")[0].replace('fabric', 'Fabric (Modded)').replace('forge', 'Forge (Modded)').replace('vanilla', "Vanilla").replace('quilt', 'Quilt (Modded)').replace('neoforge', 'NeoForge (Modded)')}`,
+            assets: {
+                small_image: version.split(" ")[0],
+                small_text: version.split(" ")[1],
+                large_image: 'minelogo',
+                large_text: 'BRLauncher'
+            },
+            timestamps: {
+                start: this.initDate,
+            },
+            buttons: [
+                {
+                    label: 'Download Launcher',
+                    url: 'https://github.com/Mateus7766/BRLauncher'
+                }
+            ]
+        })
     }
 }
