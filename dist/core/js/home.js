@@ -14,12 +14,13 @@ const launcher_js_1 = require("./launcher.js");
 const autoupdater_js_1 = require("./autoupdater.js");
 const electron_1 = require("electron");
 const base_js_1 = require("../base.js");
+const node_inspector_1 = require("node:inspector");
 class HomePage extends base_js_1.PageBase {
     constructor() {
         super({
             pageName: 'home'
         });
-        console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
+        node_inspector_1.console.log("[CLIENT SIDE] A HOME FOI CARREGADA");
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -141,8 +142,10 @@ class HomePage extends base_js_1.PageBase {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`;
             barra.style.width = `100%`;
             barra.style.padding = "0.25rem";
+            node_inspector_1.console.log(err);
         });
         launcher.on('data', (data) => {
+            node_inspector_1.console.log(data);
             barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>';
             barra.style.width = '100%';
             if (data.includes("Launching")) {
@@ -168,9 +171,9 @@ class HomePage extends base_js_1.PageBase {
         autoUpdater.on("update-found", () => {
             updater.classList.add('flex');
             updater.classList.remove('hidden');
-            console.log('Update encontrado');
+            node_inspector_1.console.log('Update encontrado');
         });
-        autoUpdater.on("update-notavaliable", () => console.log('O launcher já está atualizado.'));
+        autoUpdater.on("update-notavaliable", () => node_inspector_1.console.log('O launcher já está atualizado.'));
         no_button.addEventListener("click", (event) => {
             updater.classList.add('hidden');
             updater.classList.remove('flex');
@@ -188,7 +191,7 @@ class HomePage extends base_js_1.PageBase {
                 this.notification("O BRLauncher foi atualizado para a versão mais recente. Reabra o launcher para ver as novidades.");
             });
             autoUpdater.on('error', (error) => {
-                console.log(error);
+                node_inspector_1.console.log(error);
             });
         });
     }

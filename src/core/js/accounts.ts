@@ -14,6 +14,8 @@ class AccountsPage extends PageBase {
 
     async init() {
         await this.listAccounts()
+        this.openNewElyByAccMenu()
+        this.closeNewElyByAccMenu()
         this.openNewaccMenu()
         this.closeNewaccMenu()
         this.createAccount()
@@ -57,7 +59,7 @@ class AccountsPage extends PageBase {
 
     }
 
-    async updateList(name: string, id: number, accountType: string) {
+    async updateList(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
         const list = document.getElementById('acc-list') as HTMLElement
         const div = this.returnAccountCard(name, id, accountType)
         list.insertBefore(div, list.lastChild)
@@ -101,17 +103,28 @@ class AccountsPage extends PageBase {
 </svg> Login com Microsoft</button>
     `
 
+        const addElybyAcc = `<button id="elyby-login-btn" class="elyby-btn"><?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="24px" height=24px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><defs><style>.a{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;}</style></defs><path class="a" d="M40.5,5.5H7.5a2,2,0,0,0-2,2v33a2,2,0,0,0,2,2h33a2,2,0,0,0,2-2V7.5A2,2,0,0,0,40.5,5.5Z"/><path class="a" d="M28.8315,28.5616A5.5586,5.5586,0,0,1,24,31.3677h0a5.56,5.56,0,0,1-5.5605-5.56V22.1928A5.56,5.56,0,0,1,24,16.6323h0a5.56,5.56,0,0,1,5.5605,5.56V24H18.44"/></svg> Login com Elyby</button>`
+
         buttonsDiv.innerHTML += addLocalaAcc
         buttonsDiv.innerHTML += addMicrosoftAcc
+        buttonsDiv.innerHTML += addElybyAcc
     }
 
-    private returnAccountCard(name: string, id: number, accountType: string) {
+    private returnAccountCard(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
+
+        let avatarIcons = {
+            "Local": '../core/imgs/local.png',
+            "Microsoft": `https://mc-heads.net/avatar/${name}/100/nohelm.png`,
+            "Ely.by": `http://skinsystem.ely.by/skins/${name}.png`
+        }
+
         const div = document.createElement('div')
         div.classList.add('flex', 'flex-col', 'bg-zinc-900', 'shadow-sm', 'p-2', 'w-96', 'gap-y-3', 'rounded', 'hover:scale-105', 'duration-200')
         div.id = `${id}_div`
         const content = `
         <div class="flex gap-x-3">
-        ${accountType == 'Microsoft' ? ` <img src="https://mc-heads.net/avatar/${name}/100/nohelm.png" width="50">` : ` <img src="../core/imgs/${accountType.toLowerCase()}.png" width="50">`}
+        <img src="${avatarIcons[accountType]}" width="50">
            
             <div class="flex flex-col">
                 <p id="acc-username">${name}</p>
@@ -125,6 +138,24 @@ class AccountsPage extends PageBase {
         `
         div.innerHTML += content
         return div
+    }
+
+    openNewElyByAccMenu() {
+        const activebtn = document.getElementById('elyby-login-btn') as HTMLButtonElement
+        activebtn.addEventListener('click', () => {
+            const menu = document.getElementById('acc-menu-elyby') as HTMLElement
+            menu.classList.add('flex')
+            menu.classList.remove('hidden')
+        })
+    }
+
+    closeNewElyByAccMenu() {
+        const closebtn = document.getElementById('close-menu-ely') as HTMLButtonElement
+        closebtn.addEventListener('click', () => {
+            const menu = document.getElementById('acc-menu-elyby') as HTMLElement
+            menu.classList.add('hidden')
+            menu.classList.remove('flex')
+        })
     }
 
     openNewaccMenu() {
@@ -148,6 +179,58 @@ class AccountsPage extends PageBase {
     async createAccount() {
         const createbtn = document.getElementById('create-btn') as HTMLButtonElement
         const microsoftbtn = document.getElementById('microsoft-login-btn') as HTMLButtonElement
+        const elybybtn = document.getElementById('create-btn-ely') as HTMLButtonElement
+
+        elybybtn.addEventListener('click', async () => {
+
+            const menu = document.getElementById('acc-menu-elyby') as HTMLElement
+            menu.classList.add('hidden')
+            menu.classList.remove('flex')
+
+            const username = (document.getElementById('elyby-username') as HTMLInputElement).value
+            const password = (document.getElementById('elyby-password') as HTMLInputElement).value
+            try {
+                const data = await fetch('https://authserver.ely.by/auth/authenticate', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        username, password,
+                        requestUser: true
+                    })
+                })
+
+                const json = await data.json()
+
+                const jsonFormatted = {
+                    access_token: json.accessToken,
+                    client_token: json.clientToken,
+                    uuid: json.user.id,
+                    name: json.user.username,
+                    user_properties: json.user.properties[0],
+                    meta: {
+                        type: 'ely'
+                    },
+                    type: 'Ely.by',
+                }
+                Account.create(jsonFormatted)
+                    .then(async data => {
+                        const atual = await Account.getAtual()
+                        if (!atual) {
+                            Account.update(data.id, {
+                                selected: true
+                            })
+                            const sideUsername = document.getElementById('side-username') as HTMLElement
+                            sideUsername.innerHTML = data.name
+                        }
+                        this.updateList(data.name, data.id, 'Ely.by')
+                        this.notification('Conta criada!')
+                    })
+                    .catch(e => {
+                        this.notification("Não foi possivel adicionar sua conta, tente novamente executando o BRLauncher como administrador.")
+                    })
+            } catch (e) {
+                this.notification('Erro ao autenticar com ElyBy, desculpa.')
+            }
+        })
 
         microsoftbtn.addEventListener('click', async () => {
             const acc = await ipcRenderer.invoke("loginMicrosoft");

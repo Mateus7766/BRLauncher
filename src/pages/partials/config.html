@@ -36,9 +36,33 @@
                 </div>
             </div>
         </div>
+        <div class="flex flex-col">
+            <label class="text-2xl">Conta Ely.by</label>
+
+            <div class="flex items-center gap-4 mt-2">
+                <span id="elyStatus" class=""></span>
+
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggleEly" class="sr-only peer">
+                    <div class="w-14 h-7 bg-zinc-700 peer-focus:outline-none rounded-full peer 
+                       peer-checked:after:translate-x-full peer-checked:after:border-white 
+                       after:content-[''] after:absolute after:top-0.5 after:left-[4px] 
+                       after:bg-white after:border-zinc-300 after:border after:rounded-full 
+                       after:h-6 after:w-6 after:transition-all 
+                       peer-checked:bg-blue-500">
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-sm text-zinc-400 mt-1">
+                Ative para usar Ely.by e ver skins alternativas.
+            </p>
+        </div>
+
         <div class="flex gap-2">
             <button class="play-btn" id="salvar"><span class="material-icons mr-2">save</span> Salvar</button>
-            <button class="text-white px-5 py-2 bg-zinc-950 duration-200 mt-5 flex items-center gap-3 hover:bg-zinc-500" id="reset"><span class="material-icons mr-2">feedback</span> Redefinir</button>
+            <button class="text-white px-5 py-2 bg-zinc-950 duration-200 mt-5 flex items-center gap-3 hover:bg-zinc-500"
+                id="reset"><span class="material-icons mr-2">feedback</span> Redefinir</button>
         </div>
     </div>
 </div>

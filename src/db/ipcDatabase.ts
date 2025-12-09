@@ -7,11 +7,11 @@ import shell from "shelljs"
 const javaPath = shell.exec("where java")
 
 ipcMain.handle("launcher:update", async (_, data) => {
-  const { path, min, max, width, height } = data
+  const { path, min, max, width, height, elyBy } = data
 
   const newData = await prisma.launcher.update({
     where: { id: 1 },
-    data: { path, min, max, width, height }
+    data: { path, min, max, width, height, elyBy }
   })
 
   return newData
@@ -31,7 +31,8 @@ ipcMain.handle("launcher:resetConfig", async () => {
         max: Math.round(os.totalmem() / (1024 ** 2) / 2),
         width: 1000,
         height: 600,
-        javaPath
+        javaPath,
+        elyBy: true,
       }
     })
   }
@@ -43,7 +44,8 @@ ipcMain.handle("launcher:resetConfig", async () => {
       max: Math.round(os.totalmem() / (1024 ** 2) / 2),
       width: 1000,
       height: 600,
-      javaPath
+      javaPath,
+      elyBy: true
     }
   })
 })

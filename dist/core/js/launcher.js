@@ -16,6 +16,7 @@ exports.Launcher = void 0;
 const minecraft_java_core_1 = require("minecraft-java-core");
 const launcher_js_1 = __importDefault(require("../../db/launcher.js"));
 const account_js_1 = __importDefault(require("../../db/account.js"));
+const path_1 = __importDefault(require("path"));
 class Launcher extends minecraft_java_core_1.Launch {
     constructor() {
         super();
@@ -34,6 +35,9 @@ class Launcher extends minecraft_java_core_1.Launch {
                 return;
             let auth = yield account_js_1.default.getAtual();
             if (auth.type == "Microsoft") {
+                if (settings.elyBy) {
+                    alert("Note que você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin da Microsoft NÃO será exibida, e nem a de outros jogadores que estejam usando a conta Microsoft, desative o Ely.by skins para ver sua skin da Microsoft.");
+                }
                 const json = this.convert(auth);
                 const newAuth = yield new minecraft_java_core_1.Microsoft('00000000402b5328').refresh(json);
                 auth = yield account_js_1.default.update(auth.id, {
@@ -49,8 +53,15 @@ class Launcher extends minecraft_java_core_1.Launch {
                 });
                 console.log("[ Microsoft ] Token Microsoft atualizado");
             }
+            else if (auth.type == "Ely.by" && !settings.elyBy) {
+                alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.");
+            }
+            const jvmArgs = [];
+            const authLibPath = path_1.default.join(process.cwd(), "authlib-injector-1.2.6.jar");
+            if (settings.elyBy)
+                jvmArgs.push(`-javaagent:${authLibPath}=ely.by`, '-Dauthlibinjector.side=client');
             yield this.Launch({
-                authenticator: this.convert(auth),
+                authenticator: auth,
                 timeout: 10000,
                 path: settings.path,
                 version: version,
@@ -76,7 +87,7 @@ class Launcher extends minecraft_java_core_1.Launch {
                     max: `${settings.max}M`
                 },
                 url: null,
-                JVM_ARGS: [],
+                JVM_ARGS: jvmArgs,
                 GAME_ARGS: [],
                 mcp: undefined
             });

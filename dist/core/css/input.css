@@ -12,6 +12,11 @@
     .sidebar-icon-active {
         @apply text-blue-600
     }
+
+    .elyby-btn {
+        @apply bg-green-600 px-5 py-2 text-white flex items-center gap-3
+    }
+
     .microsoft-btn {
         @apply bg-blue-600 px-5 py-2 text-white flex items-center gap-3
     }

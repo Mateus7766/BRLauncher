@@ -27,4 +27,5 @@ model Launcher {
   min      Int
   max      Int
   javaPath String?
+  elyBy Boolean
 }

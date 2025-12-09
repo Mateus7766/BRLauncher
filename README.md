@@ -16,7 +16,25 @@
   <a href="#licensa">Licensa</a>
 </p>
 
-![screenshot](./.github/images/brlauncher1.png)
+## Tela inicial
+<h1 align="center">
+  <img src="./.github/images/screen4.png" width="1024px">
+</h1>
+
+## Mostre sua atividade no Discord
+<h1 align="center">
+<img src="./.github/images/screen3.png" width="512px">
+</h1>
+
+## Configure o Launcher
+<h1 align="center">
+<img src="./.github/images/screen1.png" width="1024px">
+</h1>
+
+## Gerêncie suas contas
+<h1 align="center">
+<img src="./.github/images/screen2.png" width="1024px">
+</h1>
 
 ## Introdução
 

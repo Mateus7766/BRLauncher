@@ -51,6 +51,14 @@ class ConfigPage extends PageBase {
 
         minPanel.innerHTML = minInput.value
         maxPanel.innerHTML = maxInput.value
+
+        const elyBy = document.getElementById('toggleEly') as HTMLInputElement
+        elyBy.checked = data.elyBy
+
+        const elyStatus = document.getElementById('elyStatus') as HTMLSpanElement
+        elyStatus.textContent = elyBy.checked ? "Ativado" : "Desativado"
+        elyStatus.className = elyBy.checked ? "text-green-500" : "text-red-500"
+
     }
 
     async initEvents() { // Necessario pra não "clonar" os eventos
@@ -62,13 +70,14 @@ class ConfigPage extends PageBase {
         const maxPanel = document.getElementById('maxPanel') as HTMLDivElement
         const minPanel = document.getElementById('minPanel') as HTMLDivElement
         const fileExplorer = document.getElementById('fileExplorer') as HTMLButtonElement
+        const elyBy = document.getElementById('toggleEly') as HTMLInputElement
 
         minInput.addEventListener('input', () => minPanel.innerHTML = minInput.value)
         maxInput.addEventListener('input', () => maxPanel.innerHTML = maxInput.value)
 
         const saveButton = document.getElementById('salvar') as HTMLButtonElement
         saveButton.addEventListener('click', () => {
-            Launcher.update(dirInput.value, parseInt(minInput.value), parseInt(maxInput.value), parseInt(widthInput.value), parseInt(heightInput.value))
+            Launcher.update(dirInput.value, parseInt(minInput.value), parseInt(maxInput.value), parseInt(widthInput.value), parseInt(heightInput.value), elyBy.checked)
                 .then(() => {
                     this.notification('Configuraçõe salvas 💫')
                     this.startConfig()

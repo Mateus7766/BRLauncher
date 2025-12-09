@@ -61,6 +61,11 @@ class ConfigPage extends base_js_1.PageBase {
             const minPanel = document.getElementById('minPanel');
             minPanel.innerHTML = minInput.value;
             maxPanel.innerHTML = maxInput.value;
+            const elyBy = document.getElementById('toggleEly');
+            elyBy.checked = data.elyBy;
+            const elyStatus = document.getElementById('elyStatus');
+            elyStatus.textContent = elyBy.checked ? "Ativado" : "Desativado";
+            elyStatus.className = elyBy.checked ? "text-green-500" : "text-red-500";
         });
     }
     initEvents() {
@@ -73,11 +78,12 @@ class ConfigPage extends base_js_1.PageBase {
             const maxPanel = document.getElementById('maxPanel');
             const minPanel = document.getElementById('minPanel');
             const fileExplorer = document.getElementById('fileExplorer');
+            const elyBy = document.getElementById('toggleEly');
             minInput.addEventListener('input', () => minPanel.innerHTML = minInput.value);
             maxInput.addEventListener('input', () => maxPanel.innerHTML = maxInput.value);
             const saveButton = document.getElementById('salvar');
             saveButton.addEventListener('click', () => {
-                launcher_js_1.default.update(dirInput.value, parseInt(minInput.value), parseInt(maxInput.value), parseInt(widthInput.value), parseInt(heightInput.value))
+                launcher_js_1.default.update(dirInput.value, parseInt(minInput.value), parseInt(maxInput.value), parseInt(widthInput.value), parseInt(heightInput.value), elyBy.checked)
                     .then(() => {
                     this.notification('Configuraçõe salvas 💫');
                     this.startConfig();

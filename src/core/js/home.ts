@@ -6,6 +6,7 @@ import { AutoUpdater } from "./autoupdater.js"
 import { ipcRenderer } from "electron"
 import { PageBase } from "../base.js"
 import { Microsoft } from "minecraft-java-core";
+import { console } from "node:inspector";
 class HomePage extends PageBase {
     constructor() {
         super({
@@ -141,9 +142,11 @@ class HomePage extends PageBase {
             barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
             barra.style.width = `100%`
             barra.style.padding = "0.25rem"
+            console.log(err)
         })
 
         launcher.on('data', (data: any) => {
+            console.log(data)
             barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
             barra.style.width = '100%'
             if (data.includes("Launching")) {
