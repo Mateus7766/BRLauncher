@@ -1,21 +1,46 @@
-<div class="p-3 overflow-y-scroll h-full no-scrollbar">
-    <p class="text-4xl">Contas</p>
-    <div class="flex flex-col gap-4" id="acc-list">
+<div class="p-6 overflow-y-scroll h-full no-scrollbar">
+    <h2 class="text-4xl font-bold text-white mb-6">Contas</h2>
+    <label class="text-lg font-semibold text-white flex items-center gap-2 mb-2">
+        <span class="material-icons text-red-500">account_circle</span>
+        Suas Contas
+    </label>
+    <div class="flex flex-col gap-4 bg-zinc-900/10 rounded-lg p-4" id="acc-list">
     </div>
 </div>
-<div class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden" id="acc-menu">
-    <button id="close-menu" class="absolute top-5 right-5"><span class="material-icons">close</span></button>
-    <div class="bg-zinc-700 p-2 flex gap-2">
-        <input  id="new-acc-username" class="bg-zinc-900 text-white outline-none border-b-2 border-transparent focus:border-blue-500 duration-300 px-2" type="text" placeholder="Seu novo nome">
-        <button class="bg-green-500 px-2 py-1" id="create-btn">Confirmar</button>
+<div class="fixed z-50 backdrop-blur-sm bg-black/40 items-center justify-center h-full w-full top-0 left-0 hidden"
+    id="acc-menu">
+    <div class="bg-zinc-800 rounded-lg shadow-2xl p-6 w-96 border border-zinc-700">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-white">Nova Conta</h2>
+            <button id="close-menu" class="text-gray-400 hover:text-white transition"><span
+                    class="material-icons">close</span></button>
+        </div>
+        <input id="new-acc-username"
+            class="w-full bg-zinc-900 text-white outline-none border border-zinc-600 rounded px-4 py-2 mb-4 focus:border-red-500 focus:ring-1 focus:ring-red-500 duration-300"
+            type="text" placeholder="Nome de usuário">
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded transition"
+            id="create-btn">Confirmar</button>
     </div>
 </div>
-<div class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden" id="acc-menu-elyby">
-    <button id="close-menu-ely" class="absolute top-5 right-5"><span class="material-icons">close</span></button>
-    <div class="bg-zinc-700 p-2 flex flex-col gap-2 min-h-fit min-w-fit">
-        <input  id="elyby-username" class="bg-zinc-900 text-white outline-none border-b-2 border-transparent focus:border-blue-500 duration-300 px-2" type="text" placeholder="Seu nome de usuário ou e-mail do Ely.by">
-         <input  id="elyby-password" class="bg-zinc-900 text-white outline-none border-b-2 border-transparent focus:border-blue-500 duration-300 px-2" type="password" placeholder="Sua senha do Ely.by">
-         <span class="text-sm text-gray-500">Os dados serão autenticados com segurança utilizando a API do Ely.by</span>
-        <button class="bg-green-500 px-2 py-1" id="create-btn-ely">Confirmar</button>
+
+</div>
+
+<div class="fixed z-50 backdrop-blur-sm bg-black/40 items-center justify-center h-full w-full top-0 left-0 hidden"
+    id="acc-menu-elyby">
+    <div class="bg-zinc-800 rounded-lg shadow-2xl p-6 w-96 border border-zinc-700">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-white">Login Ely.by</h2>
+            <button id="close-menu-ely" class="text-gray-400 hover:text-white transition"><span
+                    class="material-icons">close</span></button>
+        </div>
+        <input id="elyby-username"
+            class="w-full bg-zinc-900 text-white outline-none border border-zinc-600 rounded px-4 py-2 mb-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 duration-300"
+            type="text" placeholder="Usuário ou e-mail">
+        <input id="elyby-password"
+            class="w-full bg-zinc-900 text-white outline-none border border-zinc-600 rounded px-4 py-2 mb-4 focus:border-red-500 focus:ring-1 focus:ring-red-500 duration-300"
+            type="password" placeholder="Senha">
+        <p class="text-xs text-gray-400 mb-4">Dados autenticados com segurança via API Ely.by</p>
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded transition"
+            id="create-btn-ely">Confirmar</button>
     </div>
 </div>

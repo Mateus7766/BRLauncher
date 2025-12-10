@@ -4,24 +4,24 @@
 
 @layer components {
     .sidebar-button {
-        @apply bg-zinc-700 py-1 px-3 shadow rounded ring-0 hover:ring-2 outline-none ring-white duration-75 box-border
+        @apply bg-zinc-700 py-1 px-3 shadow rounded ring-0 hover:ring-2 outline-none ring-red-400 duration-75 box-border
     }
     .sidebar-active {
-        @apply border-l-4 border-blue-700
+        @apply border-l-4 border-red-700
     }
     .sidebar-icon-active {
-        @apply text-blue-600
+        @apply text-red-600
     }
 
     .elyby-btn {
-        @apply bg-green-600 px-5 py-2 text-white flex items-center gap-3
+        @apply bg-gradient-to-r from-green-500 to-green-600 px-5 py-2 text-white flex items-center gap-3 rounded-lg font-semibold shadow-lg transition-all duration-200
     }
 
     .microsoft-btn {
-        @apply bg-blue-600 px-5 py-2 text-white flex items-center gap-3
+        @apply bg-gradient-to-r from-blue-500 to-blue-600 px-5 py-2 text-white flex items-center gap-3 rounded-lg font-semibold shadow-lg transition-all duration-200
     }
     .play-btn {
-        @apply text-white px-5 py-2 bg-zinc-900 duration-200 flex items-center gap-3
+        @apply text-white px-5 py-2  bg-zinc-900 duration-200 flex items-center gap-3 rounded-lg font-semibold shadow-lg transition-all
     }
     .play-btn:hover {
         @apply bg-green-500

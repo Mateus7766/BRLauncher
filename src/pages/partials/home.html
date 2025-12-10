@@ -1,50 +1,40 @@
-<style>
-    #options::-webkit-scrollbar {
-        width: 8px;
-    }
+<div class="p-6 overflow-y-scroll h-full no-scrollbar flex flex-col justify-between">
+    <h2 class="text-4xl font-bold text-white mt-3">Selecione a versão</h2>
 
-    #options::-webkit-scrollbar-track {
-        background: #18181b;
-        border-radius: 9999px;
-    }
-
-    #options::-webkit-scrollbar-thumb {
-        background: #3f3f46;
-        border-radius: 9999px;
-        border: 2px solid #18181b;
-    }
-
-    #options::-webkit-scrollbar-thumb:hover {
-        background: #52525b;
-    }
-
-    #options {
-        scrollbar-width: thin;
-        scrollbar-color: #3f3f46 #18181b;
-    }
-</style>
-
-<div class="p-3 overflow-y-scroll h-full no-scrollbar flex flex-col">
     <div class="flex-1">
-        <h2 class="text-4xl font-bold text-white mt-3">Selecione a versão</h2>
         <div class="group">
             <input placeholder="Selecione a versão"
                 class="w-0 bg-zinc-500 outline-none text-white placeholder:ml-1 opacity-0" id="version"
                 value="vanilla 1.20.1">
-            <div class="shadow-md flex items-center gap-3 p-3 border-l-4 border-blue-500 bg-zinc-900 rounded hover:bg-zinc-800 transition-colors cursor-pointer duration-150"
+            <div class="shadow-md flex items-center gap-3 p-3 border-l-4 border-red-500 bg-zinc-900 rounded hover:bg-zinc-800 transition-colors cursor-pointer duration-150"
                 id="fake-select">
                 <img src="../core/imgs/steve.png" width="36" alt="Ícone da versão">
                 <span class="font-medium text-white">Vanilla 1.20.1</span>
             </div>
-            <div id="options" class="fixed z-10 w-96 group-hover:block hidden bg-zinc-900 shadow-lg rounded overflow-y-scroll h-96 border border-zinc-700">
+            <div id="options"
+                class="fixed z-10 w-96 group-hover:block hidden bg-zinc-900 shadow-lg rounded overflow-y-scroll h-96 border border-zinc-700">
             </div>
         </div>
     </div>
-    
-    <button class="play-btn mt-5 flex items-center justify-center gap-2 font-semibold hover:shadow-lg transition-all" id="play">
-        <span class="material-icons">play_circle</span> 
+
+
+    <div class="relative flex flex-col rounded-lg items-center justify-center my-4 overflow-clip"
+        style="max-height: calc(100vh - 280px);">
+
+        <img src="../core/imgs/wallpaper.png" alt="Background Image"
+            class="w-full h-full object-cover rounded-lg brightness-50 blur-sm overflow-clip">
+        <span class="absolute text-white text-3xl flex flex-col font-bold drop-shadow-lg">
+            <img src="../core/imgs/icon.png" alt="BRlauncher Icon" class="w-32 h-32 mb-2 mx-auto">
+            <p class="text-center">BRlauncher</p>
+            <p class="text-gray-400 text-sm">Lembre de deixar uma estrela no GitHub</p>
+        </span>
+
+    </div>
+
+
+    <button class="play-btn flex items-center justify-center gap-2 font-semibold hover:shadow-lg transition-all"
+        id="play">
+        <span class="material-icons">play_circle</span>
         <span>Instalar e Jogar</span>
     </button>
 </div>
-
-<div class="fixed bottom-0 p-0 w-0 bg-gradient-to-r from-blue-500 to-blue-600 h-1 line-clamp-1 duration-700 shadow-lg" id="barra"></div>

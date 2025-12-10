@@ -4,18 +4,18 @@
         
         <div class="flex flex-col gap-2">
             <label for="dir" class="text-lg font-semibold text-white flex items-center gap-2">
-                <span class="material-icons text-blue-500">folder</span>
+                <span class="material-icons text-red-500">folder</span>
                 Diretório
             </label>
             <div class="flex gap-2">
                 <input 
-                    class="flex-1 outline-none bg-zinc-900 px-4 py-2 border-l-4 border-blue-500 rounded-l focus:border-b-2 focus:border-blue-400 transition-colors" 
+                    class="flex-1 outline-none bg-zinc-900 px-4 py-2 border-l-4 border-red-500 rounded-l focus:border-b-2 focus:border-red-400 transition-colors" 
                     type="text" 
                     placeholder="Caminho para a pasta do Minecraft" 
                     id="dir"
                     aria-label="Diretório do Minecraft">
                 <button 
-                    class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r transition-colors text-white font-semibold" 
+                    class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-r transition-colors text-white font-semibold" 
                     id="fileExplorer"
                     aria-label="Abrir explorador de arquivos">
                     Procurar
@@ -25,13 +25,13 @@
 
         <div class="flex flex-col gap-2">
             <label class="text-lg font-semibold text-white flex items-center gap-2">
-                <span class="material-icons text-blue-500">aspect_ratio</span>
+                <span class="material-icons text-red-500">aspect_ratio</span>
                 Resolução
             </label>
             <div class="flex gap-4 items-center">
                 <div class="flex-1">
                     <input
-                        class="w-full outline-none bg-zinc-900 px-4 py-2 border-b-2 border-transparent focus:border-blue-500 transition-colors rounded text-center"
+                        class="w-full outline-none bg-zinc-900 px-4 py-2 border-b-2 border-transparent focus:border-red-500 transition-colors rounded text-center"
                         type="number" 
                         id="width"
                         placeholder="Largura"
@@ -40,7 +40,7 @@
                 <span class="text-white font-bold text-xl">×</span>
                 <div class="flex-1">
                     <input
-                        class="w-full outline-none bg-zinc-900 px-4 py-2 border-b-2 border-transparent focus:border-blue-500 transition-colors rounded text-center"
+                        class="w-full outline-none bg-zinc-900 px-4 py-2 border-b-2 border-transparent focus:border-red-500 transition-colors rounded text-center"
                         type="number" 
                         id="height"
                         placeholder="Altura"
@@ -51,7 +51,7 @@
 
         <div class="flex flex-col gap-3 bg-zinc-900 p-4 rounded-lg border border-zinc-800">
             <label class="text-lg font-semibold text-white flex items-center gap-2">
-                <span class="material-icons text-blue-500">memory</span>
+                <span class="material-icons text-red-500">memory</span>
                 Memória
             </label>
             
@@ -60,10 +60,10 @@
                 <div class="flex items-center gap-3">
                     <input 
                         type="range" 
-                        class="flex-1 accent-blue-500 cursor-pointer" 
+                        class="flex-1 accent-red-500 cursor-pointer" 
                         id="min"
                         aria-label="Memória mínima">
-                    <div id="minPanel" class="bg-zinc-800 px-4 py-2 rounded font-mono font-semibold text-blue-400 min-w-max">0000 MB</div>
+                    <div id="minPanel" class="bg-zinc-800 px-4 py-2 rounded font-mono font-semibold text-red-400 min-w-max">0000 MB</div>
                 </div>
             </div>
             
@@ -72,17 +72,17 @@
                 <div class="flex items-center gap-3">
                     <input 
                         type="range" 
-                        class="flex-1 accent-blue-500 cursor-pointer" 
+                        class="flex-1 accent-red-500 cursor-pointer" 
                         id="max"
                         aria-label="Memória máxima">
-                    <div id="maxPanel" class="bg-zinc-800 px-4 py-2 rounded font-mono font-semibold text-blue-400 min-w-max">0000 MB</div>
+                    <div id="maxPanel" class="bg-zinc-800 px-4 py-2 rounded font-mono font-semibold text-red-400 min-w-max">0000 MB</div>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-col gap-3 bg-zinc-900 p-4 rounded-lg border border-zinc-800">
             <label class="text-lg font-semibold text-white flex items-center gap-2">
-                <span class="material-icons text-blue-500">person</span>
+                <span class="material-icons text-red-500">person</span>
                 Sistema de autenticação Ely.by
             </label>
 
@@ -91,17 +91,17 @@
 
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="toggleEly" class="sr-only peer" aria-label="Ativar Ely.by">
-                    <div class="w-14 h-7 bg-zinc-700 peer-focus:outline-2 peer-focus:outline-blue-500 rounded-full peer 
+                    <div class="w-14 h-7 bg-zinc-700 peer-focus:outline-2 peer-focus:outline-red-500 rounded-full peer 
                        peer-checked:after:translate-x-full peer-checked:after:border-white 
                        after:content-[''] after:absolute after:top-0.5 after:left-[4px] 
                        after:bg-white after:border-zinc-300 after:border after:rounded-full 
                        after:h-6 after:w-6 after:transition-all 
-                       peer-checked:bg-blue-500">
+                       peer-checked:bg-red-500">
                     </div>
                 </label>
             </div>
 
-            <p class="text-sm text-zinc-400 flex items-start gap-2">
+            <p class="text-sm text-zinc-400 flex items-center gap-2">
                 <span class="material-icons text-sm mt-0.5">info</span>
                 <span>Ative para usar Ely.by e acessar skins customizadas.</span>
             </p>

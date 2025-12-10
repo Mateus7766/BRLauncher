@@ -37,7 +37,7 @@ class Launcher extends minecraft_java_core_1.Launch {
             if (auth.type == "Microsoft") {
                 if (settings.elyBy) {
                     new window.Notification('BRLauncher', {
-                        body: 'Você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin será exibida durante o jogo, mas você pode ter problemas de autenticação caso a Microsoft mude algo no sistema de login.'
+                        body: 'Você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin da Microsoft não será exibida durante o jogo.'
                     });
                 }
                 const json = this.convert(auth);

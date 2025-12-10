@@ -47,11 +47,11 @@ const fs_1 = require("fs");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     if (!(0, fs_1.existsSync)("./dist/pages"))
         shell.mkdir("dist/pages");
-    if (!(0, fs_1.existsSync)("./dist/assets"))
-        shell.mkdir("dist/assets");
+    if (!(0, fs_1.existsSync)("./dist/core/imgs"))
+        shell.mkdir("dist/core/imgs");
     if (!(0, fs_1.existsSync)("./dist/core/css"))
         shell.mkdir("dist/core/css");
-    shell.cp("-R", ["src/core/*"], "dist/core/");
+    shell.cp("-R", ["src/core/imgs/*"], "dist/core/imgs/");
     shell.cp("-R", ["src/pages/*"], "dist/pages/");
     shell.cp("-R", ["src/core/css/*.css"], "dist/core/css");
 }))();

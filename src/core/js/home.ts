@@ -70,7 +70,7 @@ class HomePage extends PageBase {
 
     private returnOptionElement(type: 'forge' | 'fabric' | 'vanilla' | 'quilt' | 'neoforge', version: string) {
         const div = document.createElement('div')
-        div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-blue-500', 'duration-150')
+        div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-red-500', 'duration-150')
         div.innerHTML = `<img src="../core/imgs/${type}.png" width="30">${type} ${version}`
         div.addEventListener('click', () => this.setDropdownItem(div.innerHTML.split('>')[1]))
         return div
