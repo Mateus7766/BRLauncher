@@ -36,14 +36,18 @@
         </div>
     </div>
 
-    <div class="fixed z-10  backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden"
-        id="not">
-        <button id="close-not" class="text-white absolute top-5 right-5"><span class="material-icons">close</span></button>
-        <div class="bg-zinc-700 p-2 rounded-md flex flex-col gap-2">
+   <dialog class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden rounded-lg bg-transparent" id="not" aria-label="Notificação">
+        <div class="bg-zinc-700 p-6 rounded-lg flex flex-col gap-4 shadow-2xl border border-zinc-600">
+            <div class="flex justify-between items-center">
+                <button id="close-not" class="text-white hover:bg-zinc-600 rounded p-1 transition-colors" aria-label="Fechar notificação">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
             <p class="text-white" id="not-value"></p>
-            <button class="bg-green-500 shadow-sm px-2 py-1 w-fit rounded-md" id="close-not-2">Entendi</button>
+            <button class="bg-green-600 hover:bg-green-700 shadow-md px-4 py-2 w-fit rounded-md transition-colors text-white font-semibold" id="close-not-2">Entendi</button>
         </div>
-    </div>
+    </dialog>
+
     <header id="header">
         <div style="-webkit-user-select: none; user-select: none; -webkit-app-region: drag"
             class="text-white bg-zinc-800 bg-opacity-50 flex justify-between w-full z-50 items-center">

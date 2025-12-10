@@ -2,6 +2,7 @@ import { Launch, Microsoft } from "minecraft-java-core"
 import LauncherSettings from "../../db/launcher.js"
 import Account from "../../db/account.js"
 import path from "path"
+import { title } from "process"
 
 class Launcher extends Launch {
     constructor() {
@@ -21,8 +22,10 @@ class Launcher extends Launch {
 
         let auth = await Account.getAtual()
         if (auth.type == "Microsoft") {
-            if(settings.elyBy) {
-                alert("Note que você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin da Microsoft NÃO será exibida, e nem a de outros jogadores que estejam usando a conta Microsoft, desative o Ely.by skins para ver sua skin da Microsoft.")
+            if (settings.elyBy) {
+                new window.Notification('BRLauncher', {
+                    body: 'Você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin será exibida durante o jogo, mas você pode ter problemas de autenticação caso a Microsoft mude algo no sistema de login.'
+                });
             }
             const json = this.convert(auth)
             const newAuth = await new Microsoft('00000000402b5328').refresh(json)
@@ -39,13 +42,16 @@ class Launcher extends Launch {
                 });
             console.log("[ Microsoft ] Token Microsoft atualizado")
         } else if (auth.type == "Ely.by" && !settings.elyBy) {
-            alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.")
+            new window.Notification('BRLauncher', {
+                body: 'Você está usando uma conta Ely.by com o Ely.by skins desativado, sua skin NÃO será exibida durante o jogo, e nem a de outros jogadores, mas você ainda pode jogar normalmente.'
+            });
+            // alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.")
         }
         const jvmArgs = [];
         const authLibPath = path.join(__dirname, "..", "..", "..", "authlib-injector-1.2.6.jar")
-        if(settings.elyBy)
+        if (settings.elyBy)
             jvmArgs.push(`-javaagent:${authLibPath}=ely.by`, '-Dauthlibinjector.side=client')
-       
+
         await this.Launch({
             authenticator: auth,
             timeout: 10000,

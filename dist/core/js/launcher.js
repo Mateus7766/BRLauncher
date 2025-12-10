@@ -36,7 +36,9 @@ class Launcher extends minecraft_java_core_1.Launch {
             let auth = yield account_js_1.default.getAtual();
             if (auth.type == "Microsoft") {
                 if (settings.elyBy) {
-                    alert("Note que você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin da Microsoft NÃO será exibida, e nem a de outros jogadores que estejam usando a conta Microsoft, desative o Ely.by skins para ver sua skin da Microsoft.");
+                    new window.Notification('BRLauncher', {
+                        body: 'Você está usando uma conta Microsoft com o Ely.by skins ativado, sua skin será exibida durante o jogo, mas você pode ter problemas de autenticação caso a Microsoft mude algo no sistema de login.'
+                    });
                 }
                 const json = this.convert(auth);
                 const newAuth = yield new minecraft_java_core_1.Microsoft('00000000402b5328').refresh(json);
@@ -54,7 +56,10 @@ class Launcher extends minecraft_java_core_1.Launch {
                 console.log("[ Microsoft ] Token Microsoft atualizado");
             }
             else if (auth.type == "Ely.by" && !settings.elyBy) {
-                alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.");
+                new window.Notification('BRLauncher', {
+                    body: 'Você está usando uma conta Ely.by com o Ely.by skins desativado, sua skin NÃO será exibida durante o jogo, e nem a de outros jogadores, mas você ainda pode jogar normalmente.'
+                });
+                // alert("O launcher verificou que o Ely.by skins está desativado nas configurações, sendo que você está usando uma conta Ely.by para jogar, note que você não poderá ver sua skin durante o jogo nem a de outros jogadores, mas você ainda pode jogar normalmente.")
             }
             const jvmArgs = [];
             const authLibPath = path_1.default.join(__dirname, "..", "..", "..", "authlib-injector-1.2.6.jar");

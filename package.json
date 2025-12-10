@@ -1,6 +1,6 @@
 {
   "name": "brlauncher",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Um launcher de Minecraft Brasileiro",
   "main": "dist/index.js",
   "scripts": {
