@@ -733,14 +733,14 @@ video {
   z-index: 50;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .mb-2 {
@@ -787,6 +787,13 @@ video {
   margin-top: auto;
 }
 
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
 .block {
   display: block;
 }
@@ -807,6 +814,14 @@ video {
   height: 2.5rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
+.h-4 {
+  height: 1rem;
+}
+
 .h-7 {
   height: 1.75rem;
 }
@@ -823,14 +838,6 @@ video {
   height: 100vh;
 }
 
-.h-16 {
-  height: 4rem;
-}
-
-.h-32 {
-  height: 8rem;
-}
-
 .w-0 {
   width: 0px;
 }
@@ -841,6 +848,10 @@ video {
 
 .w-14 {
   width: 3.5rem;
+}
+
+.w-32 {
+  width: 8rem;
 }
 
 .w-96 {
@@ -854,22 +865,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-16 {
-  width: 4rem;
-}
-
-.w-48 {
-  width: 12rem;
-}
-
-.w-3 {
-  width: 0.75rem;
-}
-
-.w-32 {
-  width: 8rem;
 }
 
 .min-w-max {
@@ -1089,14 +1084,13 @@ video {
   --tw-bg-opacity: 0.5;
 }
 
-.object-contain {
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.p-0 {
+  padding: 0px;
 }
 
 .p-1 {
@@ -1161,6 +1155,11 @@ video {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
@@ -1184,11 +1183,6 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
 }
 
 .font-bold {
@@ -1357,6 +1351,10 @@ video {
 
 .duration-300 {
   transition-duration: 300ms;
+}
+
+.duration-700 {
+  transition-duration: 700ms;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

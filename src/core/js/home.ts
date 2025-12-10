@@ -124,33 +124,33 @@ class HomePage extends PageBase {
 
 
         const barra = document.getElementById('barra') as HTMLElement
-        barra.style.padding = "0.25rem"
+        // barra.style.padding = "0.25rem"
 
         launcher.on("progress", (progress: any, size: any, element: any) => {
             const porcentagem = Math.round((progress / size) * 100)
-            barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
+            // barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
             barra.style.width = `${porcentagem}%`
         })
 
         launcher.on("check", (progress: any, size: any, element: any) => {
             const porcentagem = Math.round((progress / size) * 100)
-            barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
+            //barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
             barra.style.width = `${porcentagem}%`
         })
 
         launcher.on("error", (err: any) => {
-            barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
+            // barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
             barra.style.width = `100%`
-            barra.style.padding = "0.25rem"
+            //barra.style.padding = "0.25rem"
             console.log(err)
         })
 
         launcher.on('data', (data: any) => {
             console.log(data)
-            barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
+            //barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
             barra.style.width = '100%'
             if (data.includes("Launching")) {
-                barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
+                //barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
                 ipcRenderer.invoke("playing", `${type} ${version}`)
             }
         })
