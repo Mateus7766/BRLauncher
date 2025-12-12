@@ -30,6 +30,7 @@
     "material-icons": "^1.13.8",
     "minecraft-java-core": "^4.2.3",
     "semver": "^7.5.4",
+    "sharp": "^0.34.5",
     "shelljs": "^0.8.5",
     "unzipper": "^0.10.14"
   },

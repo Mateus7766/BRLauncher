@@ -2,10 +2,12 @@ import { ConfigPage as Config } from "../interfaces/launcher.js"
 
 abstract class PageBase {
     pageName: string
+    accsHeadsByName: Map<string, string>;
     abstract init(): void
 
     constructor(config: Config) {
         this.pageName = config.pageName
+        this.accsHeadsByName = new Map<string, string>();
         this.initNotification()
     }
 

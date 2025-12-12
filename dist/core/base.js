@@ -4,6 +4,7 @@ exports.PageBase = void 0;
 class PageBase {
     constructor(config) {
         this.pageName = config.pageName;
+        this.accsHeadsByName = new Map();
         this.initNotification();
     }
     initNotification() {

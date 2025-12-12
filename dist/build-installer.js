@@ -16,7 +16,7 @@ console.log('Limpando banco de dados para produção... 🚯');
     console.log('Banco de dados limpo, iniciando a compilação. 💿');
     const APP_DIR = path_1.default.resolve(process.cwd(), './build/BRLauncher-win32-x64');
     const OUT_DIR = path_1.default.resolve(process.cwd(), './windows_installer');
-    fs_1.default.rmSync(path_1.default.resolve(process.cwd(), './build/BRLauncher-win32-x64/src'), { recursive: true, force: true });
+    fs_1.default.rmSync(path_1.default.resolve(process.cwd(), './build/BRLauncher-win32-x64/resources/app/src'), { recursive: true, force: true });
     const msiCreator = new electron_wix_msi_1.MSICreator({
         icon: './src/core/imgs/icons/icon.ico',
         arch: 'x64',

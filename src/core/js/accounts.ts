@@ -3,13 +3,17 @@ import { Mojang } from "minecraft-java-core";
 import { AccountCreate } from "../../interfaces/launcher.js";
 import Account from "../../db/account.js";
 import { ipcRenderer } from "electron";
+import sharp from "sharp";
 
 class AccountsPage extends PageBase {
+   
     constructor() {
         super({
             pageName: 'accounts'
         })
         console.log("[CLIENT SIDE] GERENCIADOR DE CONTAS CARREGADO")
+
+        
     }
 
     async init() {
@@ -18,7 +22,7 @@ class AccountsPage extends PageBase {
         this.closeNewElyByAccMenu()
         this.openNewaccMenu()
         this.closeNewaccMenu()
-        this.createAccount()
+        await this.createAccount()
     }
 
 
@@ -33,8 +37,10 @@ class AccountsPage extends PageBase {
             selected: true
         })
 
-        const sideUsername = document.getElementById('side-username') as HTMLElement
-        sideUsername.innerHTML = upacc.name
+        if (upacc) {
+            this.notification(`Conta ${upacc.name} selecionada!`)
+            await this.setupSidebarAccountInfo(upacc)
+        }
     }
 
     async deleteAccount(id: number, div: HTMLDivElement, removeBtn?: HTMLButtonElement) {
@@ -45,6 +51,8 @@ class AccountsPage extends PageBase {
             if (!lengthacc) {
                 const sideUsername = document.getElementById('side-username') as HTMLElement
                 sideUsername.innerHTML = 'Não logado'
+                const sideAvatar = document.getElementById('side-avatar') as HTMLImageElement
+                sideAvatar.src = '../core/imgs/steve.png'
             }
             const list = document.getElementById('acc-list') as HTMLElement
             if (list.contains(div)) list.removeChild(div)
@@ -53,6 +61,7 @@ class AccountsPage extends PageBase {
                 div2?.remove()
             }
             await Account.delete(id)
+            this.notification(`Conta ${acc?.name} excluída!`)
         } catch (e) {
             this.notification('Algo deu errado ' + e)
         }
@@ -61,7 +70,7 @@ class AccountsPage extends PageBase {
 
     async updateList(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
         const list = document.getElementById('acc-list') as HTMLElement
-        const div = this.returnAccountCard(name, id, accountType)
+        const div = await this.returnAccountCard(name, id, accountType)
         list.insertBefore(div, list.lastChild)
         const selecBtn = document.getElementById(`${id}_add`) as HTMLButtonElement;
         selecBtn.addEventListener("click", async () => await this.selectAccount(id));
@@ -69,13 +78,27 @@ class AccountsPage extends PageBase {
         removeBtn.addEventListener("click", async () => await this.deleteAccount(id, div, removeBtn));
     }
     async listAccounts() {
-
         const oldList = document.getElementById('acc-list') as HTMLElement
         const accounts = await Account.accounts()
-        if (!accounts.length) oldList.innerHTML += '<p>Ops você não tem nenhuma conta adicionada 😭</p>'
+        if (!accounts.length) oldList.innerHTML += '<p>Ops, você não tem nenhuma conta adicionada 😭</p>'
         for (let account of accounts) {
+            switch (account.type) {
+                case "Local":
+                    this.accsHeadsByName.set(account.name, '../core/imgs/local.png');
+                    break;
+                case "Microsoft":
+                    this.accsHeadsByName.set(account.name, `https://mc-heads.net/avatar/${account.name}/100/nohelm.png`);
+                    break
+                case "Ely.by":
+                    const elyHead = await this.cropHeadFromSkinFile(`http://skinsystem.ely.by/skins/${account.name}.png`) || '../core/imgs/elyby.png'
+                    this.accsHeadsByName.set(account.name, elyHead);
+                    break
+            }
+
+            if(account.selected) await this.setupSidebarAccountInfo(account)
+
             const list = document.getElementById('acc-list') as HTMLElement
-            const card = this.returnAccountCard(account.name, account.id, account.type)
+            const card = await this.returnAccountCard(account.name, account.id, account.type)
             list.appendChild(card)
             const checkExist = setInterval(() => {
                 const selecBtn = document.getElementById(`${account.id}_add`) as HTMLButtonElement;
@@ -111,20 +134,19 @@ class AccountsPage extends PageBase {
         buttonsDiv.innerHTML += addElybyAcc
     }
 
-    private returnAccountCard(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
 
-        let avatarIcons = {
-            "Local": '../core/imgs/local.png',
-            "Microsoft": `https://mc-heads.net/avatar/${name}/100/nohelm.png`,
-            "Ely.by": `http://skinsystem.ely.by/skins/${name}.png`
-        }
+
+    private async returnAccountCard(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
+
+        console.log(this.accsHeadsByName.get('Mateus2'), name);
+
 
         const div = document.createElement('div')
         div.classList.add('flex', 'flex-col', 'bg-zinc-900', 'shadow-sm', 'p-2', 'w-96', 'gap-y-3', 'rounded', 'hover:scale-105', 'duration-200')
         div.id = `${id}_div`
         const content = `
         <div class="flex gap-x-3">
-        <img src="${avatarIcons[accountType]}" width="50">
+        <img src="${this.accsHeadsByName.get(name)}" width="50">
            
             <div class="flex flex-col">
                 <p id="acc-username">${name}</p>
@@ -218,8 +240,7 @@ class AccountsPage extends PageBase {
                             Account.update(data.id, {
                                 selected: true
                             })
-                            const sideUsername = document.getElementById('side-username') as HTMLElement
-                            sideUsername.innerHTML = data.name
+                            await this.setupSidebarAccountInfo(data)
                         }
                         this.updateList(data.name, data.id, 'Ely.by')
                         this.notification('Conta criada!')
@@ -246,8 +267,7 @@ class AccountsPage extends PageBase {
                         Account.update(data.id, {
                             selected: true
                         })
-                        const sideUsername = document.getElementById('side-username') as HTMLElement
-                        sideUsername.innerHTML = data.name
+                        await this.setupSidebarAccountInfo(data)
                     }
                     this.updateList(data.name, data.id, 'Microsoft')
                     this.notification('Conta Microsoft adicionada!')
@@ -272,8 +292,7 @@ class AccountsPage extends PageBase {
                         Account.update(data.id, {
                             selected: true
                         })
-                        const sideUsername = document.getElementById('side-username') as HTMLElement
-                        sideUsername.innerHTML = data.name
+                        await this.setupSidebarAccountInfo(data)
                     }
                     this.updateList(data.name, data.id, 'Local')
                     this.notification('Conta criada!')
@@ -285,6 +304,50 @@ class AccountsPage extends PageBase {
         })
     }
 
+    async cropHeadFromSkinFile(skinURL: string) {
+
+        try {
+            console.log('Baixando skin...');
+
+            const response = await fetch(skinURL, {
+                cache: 'no-cache'
+            });
+
+            if (!response.ok) return this.notification('Erro ao baixar a skin do servidor: ' + response.statusText);
+
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const faceBase = await sharp(buffer)
+                .extract({ left: 8, top: 8, width: 8, height: 8 })
+                .toBuffer();
+
+            const faceOverlay = await sharp(buffer)
+                .extract({ left: 40, top: 8, width: 8, height: 8 })
+                .toBuffer();
+
+            const base64Image = await sharp(faceBase)
+                .composite([{ input: faceOverlay }])
+                .resize(128, 128, { kernel: sharp.kernel.nearest })
+                .png()
+                .toBuffer()
+                .then((finalBuffer) => finalBuffer.toString('base64'));
+
+            console.log(`data:image/png;base64,${base64Image}`);
+            return `data:image/png;base64,${base64Image}`;
+
+        } catch (error) {
+            this.notification('Erro ao processar a skin: ' + error);
+        }
+    }
+
+    async setupSidebarAccountInfo(data: AccountCreate) {
+        const sideUsername = document.getElementById('side-username') as HTMLElement
+        sideUsername.innerHTML = data.name
+        const sideAvatar = document.getElementById('side-avatar') as HTMLImageElement
+        const iconUrl = this.accsHeadsByName.get(data.name)
+        sideAvatar.src = iconUrl || '../core/imgs/steve.png'
+    }
 }
 
 export {

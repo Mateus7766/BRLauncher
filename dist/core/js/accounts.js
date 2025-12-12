@@ -17,6 +17,7 @@ const base_js_1 = require("../base.js");
 const minecraft_java_core_1 = require("minecraft-java-core");
 const account_js_1 = __importDefault(require("../../db/account.js"));
 const electron_1 = require("electron");
+const sharp_1 = __importDefault(require("sharp"));
 class AccountsPage extends base_js_1.PageBase {
     constructor() {
         super({
@@ -31,7 +32,7 @@ class AccountsPage extends base_js_1.PageBase {
             this.closeNewElyByAccMenu();
             this.openNewaccMenu();
             this.closeNewaccMenu();
-            this.createAccount();
+            yield this.createAccount();
         });
     }
     selectAccount(id) {
@@ -43,8 +44,10 @@ class AccountsPage extends base_js_1.PageBase {
             const upacc = yield account_js_1.default.update(id, {
                 selected: true
             });
-            const sideUsername = document.getElementById('side-username');
-            sideUsername.innerHTML = upacc.name;
+            if (upacc) {
+                this.notification(`Conta ${upacc.name} selecionada!`);
+                yield this.setupSidebarAccountInfo(upacc);
+            }
         });
     }
     deleteAccount(id, div, removeBtn) {
@@ -57,6 +60,8 @@ class AccountsPage extends base_js_1.PageBase {
                 if (!lengthacc) {
                     const sideUsername = document.getElementById('side-username');
                     sideUsername.innerHTML = 'Não logado';
+                    const sideAvatar = document.getElementById('side-avatar');
+                    sideAvatar.src = '../core/imgs/steve.png';
                 }
                 const list = document.getElementById('acc-list');
                 if (list.contains(div))
@@ -66,6 +71,7 @@ class AccountsPage extends base_js_1.PageBase {
                     div2 === null || div2 === void 0 ? void 0 : div2.remove();
                 }
                 yield account_js_1.default.delete(id);
+                this.notification(`Conta ${acc === null || acc === void 0 ? void 0 : acc.name} excluída!`);
             }
             catch (e) {
                 this.notification('Algo deu errado ' + e);
@@ -75,7 +81,7 @@ class AccountsPage extends base_js_1.PageBase {
     updateList(name, id, accountType) {
         return __awaiter(this, void 0, void 0, function* () {
             const list = document.getElementById('acc-list');
-            const div = this.returnAccountCard(name, id, accountType);
+            const div = yield this.returnAccountCard(name, id, accountType);
             list.insertBefore(div, list.lastChild);
             const selecBtn = document.getElementById(`${id}_add`);
             selecBtn.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () { return yield this.selectAccount(id); }));
@@ -88,10 +94,24 @@ class AccountsPage extends base_js_1.PageBase {
             const oldList = document.getElementById('acc-list');
             const accounts = yield account_js_1.default.accounts();
             if (!accounts.length)
-                oldList.innerHTML += '<p>Ops você não tem nenhuma conta adicionada 😭</p>';
+                oldList.innerHTML += '<p>Ops, você não tem nenhuma conta adicionada 😭</p>';
             for (let account of accounts) {
+                switch (account.type) {
+                    case "Local":
+                        this.accsHeadsByName.set(account.name, '../core/imgs/local.png');
+                        break;
+                    case "Microsoft":
+                        this.accsHeadsByName.set(account.name, `https://mc-heads.net/avatar/${account.name}/100/nohelm.png`);
+                        break;
+                    case "Ely.by":
+                        const elyHead = (yield this.cropHeadFromSkinFile(`http://skinsystem.ely.by/skins/${account.name}.png`)) || '../core/imgs/elyby.png';
+                        this.accsHeadsByName.set(account.name, elyHead);
+                        break;
+                }
+                if (account.selected)
+                    yield this.setupSidebarAccountInfo(account);
                 const list = document.getElementById('acc-list');
-                const card = this.returnAccountCard(account.name, account.id, account.type);
+                const card = yield this.returnAccountCard(account.name, account.id, account.type);
                 list.appendChild(card);
                 const checkExist = setInterval(() => {
                     const selecBtn = document.getElementById(`${account.id}_add`);
@@ -124,17 +144,14 @@ class AccountsPage extends base_js_1.PageBase {
         });
     }
     returnAccountCard(name, id, accountType) {
-        let avatarIcons = {
-            "Local": '../core/imgs/local.png',
-            "Microsoft": `https://mc-heads.net/avatar/${name}/100/nohelm.png`,
-            "Ely.by": `http://skinsystem.ely.by/skins/${name}.png`
-        };
-        const div = document.createElement('div');
-        div.classList.add('flex', 'flex-col', 'bg-zinc-900', 'shadow-sm', 'p-2', 'w-96', 'gap-y-3', 'rounded', 'hover:scale-105', 'duration-200');
-        div.id = `${id}_div`;
-        const content = `
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(this.accsHeadsByName.get('Mateus2'), name);
+            const div = document.createElement('div');
+            div.classList.add('flex', 'flex-col', 'bg-zinc-900', 'shadow-sm', 'p-2', 'w-96', 'gap-y-3', 'rounded', 'hover:scale-105', 'duration-200');
+            div.id = `${id}_div`;
+            const content = `
         <div class="flex gap-x-3">
-        <img src="${avatarIcons[accountType]}" width="50">
+        <img src="${this.accsHeadsByName.get(name)}" width="50">
            
             <div class="flex flex-col">
                 <p id="acc-username">${name}</p>
@@ -146,8 +163,9 @@ class AccountsPage extends base_js_1.PageBase {
             <button class="text-xs bg-red-500 py-0.5 px-1 flex items-center" id="${id}_remove"><span class="material-icons mr-1" >remove_circle</span> Remover conta</button>
         </div>
         `;
-        div.innerHTML += content;
-        return div;
+            div.innerHTML += content;
+            return div;
+        });
     }
     openNewElyByAccMenu() {
         const activebtn = document.getElementById('elyby-login-btn');
@@ -219,8 +237,7 @@ class AccountsPage extends base_js_1.PageBase {
                             account_js_1.default.update(data.id, {
                                 selected: true
                             });
-                            const sideUsername = document.getElementById('side-username');
-                            sideUsername.innerHTML = data.name;
+                            yield this.setupSidebarAccountInfo(data);
                         }
                         this.updateList(data.name, data.id, 'Ely.by');
                         this.notification('Conta criada!');
@@ -247,8 +264,7 @@ class AccountsPage extends base_js_1.PageBase {
                         account_js_1.default.update(data.id, {
                             selected: true
                         });
-                        const sideUsername = document.getElementById('side-username');
-                        sideUsername.innerHTML = data.name;
+                        yield this.setupSidebarAccountInfo(data);
                     }
                     this.updateList(data.name, data.id, 'Microsoft');
                     this.notification('Conta Microsoft adicionada!');
@@ -273,8 +289,7 @@ class AccountsPage extends base_js_1.PageBase {
                         account_js_1.default.update(data.id, {
                             selected: true
                         });
-                        const sideUsername = document.getElementById('side-username');
-                        sideUsername.innerHTML = data.name;
+                        yield this.setupSidebarAccountInfo(data);
                     }
                     this.updateList(data.name, data.id, 'Local');
                     this.notification('Conta criada!');
@@ -284,6 +299,46 @@ class AccountsPage extends base_js_1.PageBase {
                 menu.classList.add('hidden');
                 menu.classList.remove('flex');
             }));
+        });
+    }
+    cropHeadFromSkinFile(skinURL) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Baixando skin...');
+                const response = yield fetch(skinURL, {
+                    cache: 'no-cache'
+                });
+                if (!response.ok)
+                    return this.notification('Erro ao baixar a skin do servidor: ' + response.statusText);
+                const arrayBuffer = yield response.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                const faceBase = yield (0, sharp_1.default)(buffer)
+                    .extract({ left: 8, top: 8, width: 8, height: 8 })
+                    .toBuffer();
+                const faceOverlay = yield (0, sharp_1.default)(buffer)
+                    .extract({ left: 40, top: 8, width: 8, height: 8 })
+                    .toBuffer();
+                const base64Image = yield (0, sharp_1.default)(faceBase)
+                    .composite([{ input: faceOverlay }])
+                    .resize(128, 128, { kernel: sharp_1.default.kernel.nearest })
+                    .png()
+                    .toBuffer()
+                    .then((finalBuffer) => finalBuffer.toString('base64'));
+                console.log(`data:image/png;base64,${base64Image}`);
+                return `data:image/png;base64,${base64Image}`;
+            }
+            catch (error) {
+                this.notification('Erro ao processar a skin: ' + error);
+            }
+        });
+    }
+    setupSidebarAccountInfo(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sideUsername = document.getElementById('side-username');
+            sideUsername.innerHTML = data.name;
+            const sideAvatar = document.getElementById('side-avatar');
+            const iconUrl = this.accsHeadsByName.get(data.name);
+            sideAvatar.src = iconUrl || '../core/imgs/steve.png';
         });
     }
 }
