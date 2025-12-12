@@ -28,4 +28,5 @@ model Launcher {
   max      Int
   javaPath String?
   elyBy Boolean
+  lastUsed String?
 }

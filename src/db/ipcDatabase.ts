@@ -7,11 +7,11 @@ import shell from "shelljs"
 const javaPath = shell.exec("where java")
 
 ipcMain.handle("launcher:update", async (_, data) => {
-  const { path, min, max, width, height, elyBy } = data
+  const { path, min, max, width, height, elyBy, lastUsed } = data
 
   const newData = await prisma.launcher.update({
     where: { id: 1 },
-    data: { path, min, max, width, height, elyBy }
+    data: { path, min, max, width, height, elyBy, lastUsed }
   })
 
   return newData

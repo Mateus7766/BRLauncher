@@ -1,11 +1,9 @@
-import axios from "axios"
 import { Launcher } from "./launcher.js"
-import LauncherDB from "../../db/launcher.js";
+import LauncherSettings from "../../db/launcher.js";
 import { FabricAPI, MineAPI, QuiltAPI, NeoForgeAPI } from "../../interfaces/launcher.js"
 import { AutoUpdater } from "./autoupdater.js"
 import { ipcRenderer } from "electron"
 import { PageBase } from "../base.js"
-import { Microsoft } from "minecraft-java-core";
 import { console } from "node:inspector";
 class HomePage extends PageBase {
     constructor() {
@@ -19,11 +17,19 @@ class HomePage extends PageBase {
         await this.manageDropdown()
         this.initUpdater()
         const play = document.getElementById('play') as HTMLButtonElement
+
         play.addEventListener('click', () => {
             this.startLauncher()
             play.innerHTML = '<span class="material-icons">play_disabled</span> Instalando...'
             play.disabled = true
         });
+
+        const settings = await LauncherSettings.config()
+        if (!settings) return
+        console.log('Última versão usada:', settings.lastUsed);
+        if (settings.lastUsed) {
+            await this.setDropdownItem(settings.lastUsed)
+        }
     }
 
     // private async getInstalledVersions(){
@@ -38,7 +44,7 @@ class HomePage extends PageBase {
 
     private async getNeoForgeVersions() {
         const tempArray: string[] = [];
-       
+
         (await (await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge")).json() as NeoForgeAPI).versions.map(version => {
             version = version.split(".").slice(0, 2).join(".")
             if (!tempArray.includes(version)) tempArray.push(version)
@@ -72,15 +78,17 @@ class HomePage extends PageBase {
         const div = document.createElement('div')
         div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-red-500', 'duration-150')
         div.innerHTML = `<img src="../core/imgs/${type}.png" width="30">${type} ${version}`
-        div.addEventListener('click', () => this.setDropdownItem(div.innerHTML.split('>')[1]))
+        div.addEventListener('click', async () => await this.setDropdownItem(div.innerHTML.split('>')[1]))
         return div
     }
 
-    private setDropdownItem(item: string) {
+    private async setDropdownItem(item: string) {
+
         const fake = document.getElementById('fake-select') as HTMLElement
         fake.innerHTML = `<img src="../core/imgs/${item.split(' ')[0]}.png" width="30">${item}`
         const input = document.getElementById('version') as HTMLInputElement
         input.value = item
+
     }
 
     async manageDropdown() {
@@ -117,52 +125,61 @@ class HomePage extends PageBase {
         }
     }
 
-    startLauncher() {
-        const [type, version] = (document.getElementById('version') as HTMLInputElement).value.split(' ')
-        const launcher = new Launcher()
-        launcher.init(version, type)
+    async startLauncher() {
+        try {
+            const [type, version] = (document.getElementById('version') as HTMLInputElement).value.split(' ')
+
+            const settings = await LauncherSettings.config();
+            await LauncherSettings.update(settings.path, settings.min, settings.max, settings.width, settings.height, settings.elyBy, `${type} ${version}`)
 
 
-        const barra = document.getElementById('barra') as HTMLElement
-        // barra.style.padding = "0.25rem"
+            const launcher = new Launcher()
+            launcher.init(version, type)
 
-        launcher.on("progress", (progress: any, size: any, element: any) => {
-            const porcentagem = Math.round((progress / size) * 100)
-            // barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
-            barra.style.width = `${porcentagem}%`
-        })
 
-        launcher.on("check", (progress: any, size: any, element: any) => {
-            const porcentagem = Math.round((progress / size) * 100)
-            //barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
-            barra.style.width = `${porcentagem}%`
-        })
+            const barra = document.getElementById('barra') as HTMLElement
+            // barra.style.padding = "0.25rem"
 
-        launcher.on("error", (err: any) => {
-            // barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
-            barra.style.width = `100%`
-            //barra.style.padding = "0.25rem"
-            console.log(err)
-        })
+            launcher.on("progress", (progress: any, size: any, element: any) => {
+                const porcentagem = Math.round((progress / size) * 100)
+                // barra.innerHTML = `Baixando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
+                barra.style.width = `${porcentagem}%`
+            })
 
-        launcher.on('data', (data: any) => {
-            console.log(data)
-            //barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
-            barra.style.width = '100%'
-            if (data.includes("Launching")) {
-                //barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
-                ipcRenderer.invoke("playing", `${type} ${version}`)
-            }
-        })
+            launcher.on("check", (progress: any, size: any, element: any) => {
+                const porcentagem = Math.round((progress / size) * 100)
+                //barra.innerHTML = `Checando ${element} | ${porcentagem}% | ${(progress / 1024).toFixed(2)}/${(size / 1024).toFixed(2)} MB`
+                barra.style.width = `${porcentagem}%`
+            })
 
-        launcher.on('close', (code: number) => {
-            barra.style.width = '0%'
-            barra.style.padding = "0px"
-            const play = document.getElementById('play') as HTMLButtonElement
-            play.disabled = false
-            play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar'
-            ipcRenderer.invoke("stopPlaying")
-        })
+            launcher.on("error", (err: any) => {
+                // barra.innerHTML = `<span class="text-red-700">${JSON.stringify(err)}</span>`
+                barra.style.width = `100%`
+                //barra.style.padding = "0.25rem"
+                console.log(err)
+            })
+
+            launcher.on('data', (data: any) => {
+                console.log(data)
+                //barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
+                barra.style.width = '100%'
+                if (data.includes("Launching")) {
+                    //barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
+                    ipcRenderer.invoke("playing", `${type} ${version}`)
+                }
+            })
+
+            launcher.on('close', (code: number) => {
+                barra.style.width = '0%'
+                barra.style.padding = "0px"
+                const play = document.getElementById('play') as HTMLButtonElement
+                play.disabled = false
+                play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar'
+                ipcRenderer.invoke("stopPlaying")
+            })
+        } catch (e) {
+            this.notification("Ocorreu um erro ao iniciar o jogo: " + e)
+        }
     }
 
     initUpdater() {

@@ -19,10 +19,10 @@ const appdata_path_1 = __importDefault(require("appdata-path"));
 const shelljs_1 = __importDefault(require("shelljs"));
 const javaPath = shelljs_1.default.exec("where java");
 electron_1.ipcMain.handle("launcher:update", (_, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const { path, min, max, width, height, elyBy } = data;
+    const { path, min, max, width, height, elyBy, lastUsed } = data;
     const newData = yield index_js_1.prisma.launcher.update({
         where: { id: 1 },
-        data: { path, min, max, width, height, elyBy }
+        data: { path, min, max, width, height, elyBy, lastUsed }
     });
     return newData;
 }));
