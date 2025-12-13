@@ -91,6 +91,7 @@ class AccountsPage extends base_js_1.PageBase {
     }
     listAccounts() {
         return __awaiter(this, void 0, void 0, function* () {
+            // console.log('Listando contas...')
             const oldList = document.getElementById('acc-list');
             const accounts = yield account_js_1.default.accounts();
             if (!accounts.length)
@@ -145,7 +146,7 @@ class AccountsPage extends base_js_1.PageBase {
     }
     returnAccountCard(name, id, accountType) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.accsHeadsByName.get('Mateus2'), name);
+            // console.log(this.accsHeadsByName.get('Mateus2'), name);
             const div = document.createElement('div');
             div.classList.add('flex', 'flex-col', 'bg-zinc-900', 'shadow-sm', 'p-2', 'w-96', 'gap-y-3', 'rounded', 'hover:scale-105', 'duration-200');
             div.id = `${id}_div`;
@@ -239,6 +240,8 @@ class AccountsPage extends base_js_1.PageBase {
                             });
                             yield this.setupSidebarAccountInfo(data);
                         }
+                        const elyHead = (yield this.cropHeadFromSkinFile(`http://skinsystem.ely.by/skins/${data.name}.png`)) || '../core/imgs/elyby.png';
+                        this.accsHeadsByName.set(data.name, elyHead);
                         this.updateList(data.name, data.id, 'Ely.by');
                         this.notification('Conta criada!');
                     }))
@@ -247,7 +250,7 @@ class AccountsPage extends base_js_1.PageBase {
                     });
                 }
                 catch (e) {
-                    this.notification('Erro ao autenticar com ElyBy, desculpa.');
+                    this.notification('Erro ao autenticar com Ely.By, desculpa.');
                 }
             }));
             microsoftbtn.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
@@ -256,6 +259,8 @@ class AccountsPage extends base_js_1.PageBase {
                     this.notification('Falha ao logar com Microsoft: Parece que você não tem o minecraft comprado nessa conta.');
                     return;
                 }
+                if (!acc)
+                    return this.notification('A solicitação de login não foi concluída.');
                 acc.type = 'Microsoft';
                 account_js_1.default.create(acc)
                     .then((data) => __awaiter(this, void 0, void 0, function* () {
@@ -266,6 +271,7 @@ class AccountsPage extends base_js_1.PageBase {
                         });
                         yield this.setupSidebarAccountInfo(data);
                     }
+                    this.accsHeadsByName.set(data.name, `https://mc-heads.net/avatar/${data.name}/100/nohelm.png`);
                     this.updateList(data.name, data.id, 'Microsoft');
                     this.notification('Conta Microsoft adicionada!');
                 }))
@@ -291,10 +297,11 @@ class AccountsPage extends base_js_1.PageBase {
                         });
                         yield this.setupSidebarAccountInfo(data);
                     }
+                    this.accsHeadsByName.set(data.name, '../core/imgs/local.png');
                     this.updateList(data.name, data.id, 'Local');
                     this.notification('Conta criada!');
                 }))
-                    .catch(e => this.notification("Não foi possivel criar sua conta, tente novamente executando o BRLauncher como administrador."));
+                    .catch(() => this.notification("Não foi possivel criar sua conta, tente novamente executando o BRLauncher como administrador."));
                 const menu = document.getElementById('acc-menu');
                 menu.classList.add('hidden');
                 menu.classList.remove('flex');

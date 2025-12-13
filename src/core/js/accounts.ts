@@ -6,14 +6,14 @@ import { ipcRenderer } from "electron";
 import sharp from "sharp";
 
 class AccountsPage extends PageBase {
-   
+
     constructor() {
         super({
             pageName: 'accounts'
         })
         console.log("[CLIENT SIDE] GERENCIADOR DE CONTAS CARREGADO")
 
-        
+
     }
 
     async init() {
@@ -78,6 +78,7 @@ class AccountsPage extends PageBase {
         removeBtn.addEventListener("click", async () => await this.deleteAccount(id, div, removeBtn));
     }
     async listAccounts() {
+        // console.log('Listando contas...')
         const oldList = document.getElementById('acc-list') as HTMLElement
         const accounts = await Account.accounts()
         if (!accounts.length) oldList.innerHTML += '<p>Ops, você não tem nenhuma conta adicionada 😭</p>'
@@ -95,7 +96,7 @@ class AccountsPage extends PageBase {
                     break
             }
 
-            if(account.selected) await this.setupSidebarAccountInfo(account)
+            if (account.selected) await this.setupSidebarAccountInfo(account)
 
             const list = document.getElementById('acc-list') as HTMLElement
             const card = await this.returnAccountCard(account.name, account.id, account.type)
@@ -138,7 +139,7 @@ class AccountsPage extends PageBase {
 
     private async returnAccountCard(name: string, id: number, accountType: "Local" | "Microsoft" | "Ely.by") {
 
-        console.log(this.accsHeadsByName.get('Mateus2'), name);
+        // console.log(this.accsHeadsByName.get('Mateus2'), name);
 
 
         const div = document.createElement('div')
@@ -242,6 +243,8 @@ class AccountsPage extends PageBase {
                             })
                             await this.setupSidebarAccountInfo(data)
                         }
+                        const elyHead = await this.cropHeadFromSkinFile(`http://skinsystem.ely.by/skins/${data.name}.png`) || '../core/imgs/elyby.png'
+                        this.accsHeadsByName.set(data.name, elyHead);
                         this.updateList(data.name, data.id, 'Ely.by')
                         this.notification('Conta criada!')
                     })
@@ -249,7 +252,7 @@ class AccountsPage extends PageBase {
                         this.notification("Não foi possivel adicionar sua conta, tente novamente executando o BRLauncher como administrador.")
                     })
             } catch (e) {
-                this.notification('Erro ao autenticar com ElyBy, desculpa.')
+                this.notification('Erro ao autenticar com Ely.By, desculpa.')
             }
         })
 
@@ -259,6 +262,7 @@ class AccountsPage extends PageBase {
                 this.notification('Falha ao logar com Microsoft: Parece que você não tem o minecraft comprado nessa conta.')
                 return;
             }
+            if (!acc) return this.notification('A solicitação de login não foi concluída.');
             acc.type = 'Microsoft'
             Account.create(acc)
                 .then(async data => {
@@ -269,6 +273,7 @@ class AccountsPage extends PageBase {
                         })
                         await this.setupSidebarAccountInfo(data)
                     }
+                    this.accsHeadsByName.set(data.name, `https://mc-heads.net/avatar/${data.name}/100/nohelm.png`);
                     this.updateList(data.name, data.id, 'Microsoft')
                     this.notification('Conta Microsoft adicionada!')
                 })
@@ -294,10 +299,11 @@ class AccountsPage extends PageBase {
                         })
                         await this.setupSidebarAccountInfo(data)
                     }
+                    this.accsHeadsByName.set(data.name, '../core/imgs/local.png');
                     this.updateList(data.name, data.id, 'Local')
                     this.notification('Conta criada!')
                 })
-                .catch(e => this.notification("Não foi possivel criar sua conta, tente novamente executando o BRLauncher como administrador."))
+                .catch(() => this.notification("Não foi possivel criar sua conta, tente novamente executando o BRLauncher como administrador."))
             const menu = document.getElementById('acc-menu') as HTMLElement
             menu.classList.add('hidden')
             menu.classList.remove('flex')
