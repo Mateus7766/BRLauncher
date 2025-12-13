@@ -138,7 +138,7 @@ class AccountsPage extends base_js_1.PageBase {
 </svg> Login com Microsoft</button>
     `;
             const addElybyAcc = `<button id="elyby-login-btn" class="elyby-btn"><?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="24px" height=24px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><defs><style>.a{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;}</style></defs><path class="a" d="M40.5,5.5H7.5a2,2,0,0,0-2,2v33a2,2,0,0,0,2,2h33a2,2,0,0,0,2-2V7.5A2,2,0,0,0,40.5,5.5Z"/><path class="a" d="M28.8315,28.5616A5.5586,5.5586,0,0,1,24,31.3677h0a5.56,5.56,0,0,1-5.5605-5.56V22.1928A5.56,5.56,0,0,1,24,16.6323h0a5.56,5.56,0,0,1,5.5605,5.56V24H18.44"/></svg> Login com Elyby</button>`;
+<svg width="24px" height=24px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><defs><style>.a{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;}</style></defs><path class="a" d="M40.5,5.5H7.5a2,2,0,0,0-2,2v33a2,2,0,0,0,2,2h33a2,2,0,0,0,2-2V7.5A2,2,0,0,0,40.5,5.5Z"/><path class="a" d="M28.8315,28.5616A5.5586,5.5586,0,0,1,24,31.3677h0a5.56,5.56,0,0,1-5.5605-5.56V22.1928A5.56,5.56,0,0,1,24,16.6323h0a5.56,5.56,0,0,1,5.5605,5.56V24H18.44"/></svg> Login com ely.by</button>`;
             buttonsDiv.innerHTML += addLocalaAcc;
             buttonsDiv.innerHTML += addMicrosoftAcc;
             buttonsDiv.innerHTML += addElybyAcc;
