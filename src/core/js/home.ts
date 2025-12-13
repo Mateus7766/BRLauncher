@@ -161,21 +161,29 @@ class HomePage extends PageBase {
 
             launcher.on('data', (data: any) => {
                 console.log(data)
-                //barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
                 barra.style.width = '100%'
                 if (data.includes("Launching")) {
-                    //barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
                     ipcRenderer.invoke("playing", `${type} ${version}`)
+                    const isPlaying = document.getElementById("playing") as HTMLDivElement
+                    setTimeout(() => {
+                        isPlaying.classList.remove("hidden")
+                        isPlaying.classList.add("flex")
+                    }, 5500);
                 }
             })
 
             launcher.on('close', (code: number) => {
                 barra.style.width = '0%'
                 barra.style.padding = "0px"
+
                 const play = document.getElementById('play') as HTMLButtonElement
                 play.disabled = false
                 play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar'
                 ipcRenderer.invoke("stopPlaying")
+
+                const isPlaying = document.getElementById("playing") as HTMLDivElement
+                isPlaying.classList.add("hidden")
+                isPlaying.classList.remove("flex")
             })
         } catch (e) {
             this.notification("Ocorreu um erro ao iniciar o jogo: " + e)

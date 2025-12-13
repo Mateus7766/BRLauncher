@@ -163,11 +163,14 @@ class HomePage extends base_js_1.PageBase {
                 });
                 launcher.on('data', (data) => {
                     node_inspector_1.console.log(data);
-                    //barra.innerHTML = '<span class="text-lime-700">Iniciando JVM e o Minecraft</span>'
                     barra.style.width = '100%';
                     if (data.includes("Launching")) {
-                        //barra.innerHTML = '<span class="text-lime-700">Jogo rodando...</span>'
                         electron_1.ipcRenderer.invoke("playing", `${type} ${version}`);
+                        const isPlaying = document.getElementById("playing");
+                        setTimeout(() => {
+                            isPlaying.classList.remove("hidden");
+                            isPlaying.classList.add("flex");
+                        }, 5500);
                     }
                 });
                 launcher.on('close', (code) => {
@@ -177,6 +180,9 @@ class HomePage extends base_js_1.PageBase {
                     play.disabled = false;
                     play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar';
                     electron_1.ipcRenderer.invoke("stopPlaying");
+                    const isPlaying = document.getElementById("playing");
+                    isPlaying.classList.add("hidden");
+                    isPlaying.classList.remove("flex");
                 });
             }
             catch (e) {

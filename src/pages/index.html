@@ -17,18 +17,29 @@
     </style>
 </head>
 
-<body class="bg-zinc-700 flex flex-col h-screen" id="body">
+<body class="bg-zinc-700 flex flex-col h-screen select-none" id="body">
     <div id="loading" class="absolute w-full h-full backdrop-blur-xl z-30 flex items-center justify-center">
-        <div>
-            <img src="../core/imgs/bee.gif" width="155" />
-            <p class="text-white text-center animate-pulse">Carregando...</p>
+        <div class="flex items-center justify-center flex-col gap-5">
+            <div
+                class="w-14 h-14 font-bold border-4 border-transparent border-t-red-500 border-r-red-500 rounded-full animate-spin">
+            </div>
+            <p class="text-white text-center animate-pulse">Carregando a interface...</p>
         </div>
     </div>
-    <div class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden" id="updater">
-        <button id="close-updater" class="text-white absolute top-5 right-5"><span class="material-icons">close</span></button>
+    <div id="playing" class="absolute w-full h-full backdrop-blur-xl z-30 items-center justify-center hidden">
+        <div class="flex items-center justify-center flex-col gap-5">
+            <img src="../core/imgs/icon.png" class="w-20 h-20">
+            <p class="text-white text-center animate-pulse">Minecraft Rodando</p>
+        </div>
+    </div>
+    <div class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden"
+        id="updater">
+        <button id="close-updater" class="text-white absolute top-5 right-5"><span
+                class="material-icons">close</span></button>
         <div class="bg-zinc-700 flex flex-col gap-2 w-96">
             <p class="mt-5 text-xl font-bold text-white text-center">Nova atualização</p>
-            <p class="text-white text-center text-sm">Uma nova versão do BRLauncher está disponivel. Deseja atualizar agora? irá levar menos de 1 minuto.</p>
+            <p class="text-white text-center text-sm">Uma nova versão do BRLauncher está disponivel. Deseja atualizar
+                agora? irá levar menos de 1 minuto.</p>
             <div class="flex justify-between bottom-0">
                 <button class="bg-green-500 w-1/2 h-10" id="yupdate">Sim</button>
                 <button class="bg-red-500 w-1/2 h-10" id="nupdate">Não, obrigado</button>
@@ -36,19 +47,24 @@
         </div>
     </div>
 
-   <dialog class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden rounded-lg bg-transparent" id="not" aria-label="Notificação">
+    <dialog
+        class="fixed z-10 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden rounded-lg bg-transparent"
+        id="not" aria-label="Notificação">
         <div class="bg-zinc-700 p-6 rounded-lg flex flex-col gap-4 shadow-2xl border border-zinc-600">
             <div class="flex justify-between items-center">
-                <button id="close-not" class="text-white hover:bg-zinc-600 rounded p-1 transition-colors" aria-label="Fechar notificação">
+                <button id="close-not" class="text-white hover:bg-zinc-600 rounded p-1 transition-colors"
+                    aria-label="Fechar notificação">
                     <span class="material-icons">close</span>
                 </button>
             </div>
             <p class="text-white" id="not-value"></p>
-            <button class="bg-green-600 hover:bg-green-700 shadow-md px-4 py-2 w-fit rounded-md transition-colors text-white font-semibold" id="close-not-2">Entendi</button>
+            <button
+                class="bg-green-600 hover:bg-green-700 shadow-md px-4 py-2 w-fit rounded-md transition-colors text-white font-semibold"
+                id="close-not-2">Entendi</button>
         </div>
     </dialog>
 
-    <header id="header">
+    <header id="header" class="z-50">
         <div style="-webkit-user-select: none; user-select: none; -webkit-app-region: drag"
             class="text-white bg-zinc-800 bg-opacity-50 flex justify-between w-full z-50 items-center">
             <p class="ml-3 text-sm">BRLAUNCHER</p>
@@ -75,17 +91,16 @@
                     Jogar</p>
             </button>
             <button class="sidebar-button" id="config-btn">
-                <p class="flex items-center text-lg" ><span class="material-icons mr-4">apps</span>
+                <p class="flex items-center text-lg"><span class="material-icons mr-4">apps</span>
                     Configurações</p>
             </button>
             <button class="sidebar-button" id="accounts-btn">
-                <p class="flex items-center text-lg" ><span
-                        class="material-icons mr-4">account_circle</span> Contas</p>
+                <p class="flex items-center text-lg"><span class="material-icons mr-4">account_circle</span> Contas</p>
             </button>
             <button class="sidebar-button" id="about-btn">
                 <p class="flex items-center text-lg"><span class="material-icons mr-4">flag_circle</span> Sobre</p>
             </button>
-            <div class="mt-auto flex items-center bg-zinc-900 p-2 rounded-md">
+            <div class="mt-auto flex items-center bg-zinc-900 p-2 rounded-lg border-2 border-zinc-700 hover:border-zinc-600 transition-colors">
                 <img id="side-avatar" src="../core/imgs/steve.png" width="36">
                 <div class="ml-3 text-sm flex flex-col items-center">
                     <p id="side-username"></p>
@@ -94,4 +109,5 @@
         </aside>
     </main>
 </body>
+
 </html>
