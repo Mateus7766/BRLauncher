@@ -1,99 +1,95 @@
 <div class="p-4 overflow-y-scroll h-full no-scrollbar">
+    <div id="download-animation" class="fixed bottom-4 right-4 hidden z-50">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 shadow-2xl">
+            <div class="flex items-center gap-3">
+                <div class="animate-spin">
+                    <span class="material-icons text-green-500">download</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <p class="text-white text-sm font-semibold">Baixando mod...</p>
+                    <div class="w-32 h-1 bg-zinc-800 rounded overflow-hidden">
+                        <div class="h-full bg-green-600 rounded animate-pulse" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed z-20 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden"
+        id="mod-install-modal" aria-label="Instalar mod">
+        <div class="bg-zinc-900 p-6 rounded-lg flex flex-col gap-4 shadow-2xl border border-zinc-800" style="width: 80%;">
+
+            <div class="flex justify-between items-center">
+                <h3 class="text-white text-lg font-semibold">Instalar Mod</h3>
+                <button id="close-mod-install" class="text-zinc-300 hover:bg-zinc-800 rounded p-1 transition-colors"
+                    aria-label="Fechar">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-sm text-zinc-400">Versão do Minecraft</label>
+                <select id="install-game-version"
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
+                    <option value="">Selecionar versão</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-sm text-zinc-400">Loader</label>
+                <select id="install-loader"
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
+                    <option value="">Selecionar loader</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-sm text-zinc-400">Perfil</label>
+                <select id="install-profile"
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
+                    <option value="">Selecionar perfil</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="cancel-mod-install"
+                    class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded transition-colors">
+                    Cancelar
+                </button>
+                <button id="confirm-mod-install"
+                    class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition-colors text-white font-semibold">
+                    Instalar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
     <div class="flex items-start gap-4 h-full">
-        <!-- Sidebar filtros -->
-        <aside class="w-72 shrink-0 bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex flex-col gap-4">
-            <div class="flex items-center gap-2">
-                <span class="material-icons text-blue-500">filter_list</span>
-                <p class="text-lg font-semibold text-white">Filtros</p>
-            </div>
-
-            <div class="space-y-3">
-                <p class="text-xs font-semibold text-zinc-400 uppercase">Versão do jogo</p>
-                <div class="flex flex-col gap-2 text-sm text-zinc-300">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="accent-blue-500" value="1.21.1"> 1.21.1
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="accent-blue-500" value="1.20.6"> 1.20.6
-                    </label>
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="accent-blue-500" value="1.19.4"> 1.19.4
-                    </label>
-                    <button class="text-blue-400 hover:text-blue-300 text-xs font-semibold w-fit">Ver todas</button>
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <p class="text-xs font-semibold text-zinc-400 uppercase">Loader</p>
-                <div class="flex flex-col gap-2 text-sm text-zinc-300">
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Fabric"> Fabric</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Forge"> Forge</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="NeoForge"> NeoForge</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Quilt"> Quilt</label>
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <p class="text-xs font-semibold text-zinc-400 uppercase">Categorias</p>
-                <div class="flex flex-col gap-2 text-sm text-zinc-300">
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Adventure"> Adventure</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Utility"> Utility</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="WorldGen"> World Gen</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Client"> Client</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" class="accent-blue-500" value="Server"> Server</label>
-                    <button class="text-blue-400 hover:text-blue-300 text-xs font-semibold w-fit">Ver mais</button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Conteúdo principal -->
         <main class="flex-1 flex flex-col gap-4">
             <header class="flex flex-col gap-2">
                 <h2 class="text-2xl font-bold text-white">Modificações</h2>
-                <p class="text-zinc-300 text-sm">Gerencie, organize e descubra mods para personalizar sua experiência de jogo.</p>
+                <p class="text-zinc-300 text-sm">Gerencie, organize e descubra mods para personalizar sua experiência de
+                    jogo.</p>
             </header>
 
             <div class="flex flex-wrap gap-3 items-center bg-zinc-900 border border-zinc-800 rounded-lg p-3">
-                <div class="flex items-center gap-2 flex-1 min-w-[220px] bg-zinc-950 border border-zinc-800 rounded px-3 py-2">
+                <div
+                    class="flex items-center gap-2 flex-1 min-w-[220px] bg-zinc-950 border border-zinc-800 rounded px-3 py-2">
                     <span class="material-icons text-zinc-400">search</span>
-                    <input 
-                        id="mods-search"
-                        type="text"
-                        placeholder="Buscar mods"
+                    <input id="mods-search" type="text" placeholder="Buscar mods"
                         class="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-zinc-500">
                 </div>
-                <div class="flex items-center gap-2 text-sm text-zinc-300">
-                    <label for="mods-sort" class="text-zinc-400">Ordenar:</label>
-                    <select id="mods-sort" class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none">
-                        <option value="relevance">Relevância</option>
-                        <option value="recent">Recentes</option>
-                        <option value="popular">Populares</option>
-                        <option value="updated">Atualizados</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-2 text-sm text-zinc-300">
-                    <label for="mods-view" class="text-zinc-400">Exibir:</label>
-                    <select id="mods-view" class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none">
-                        <option value="20">20</option>
-                        <option value="40">40</option>
-                        <option value="60">60</option>
-                    </select>
-                </div>
-                <button
-                    class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors text-white font-semibold flex items-center gap-2"
-                    id="procurar-mods-btn">
-                    <span class="material-icons text-base">search</span>
-                </button>
             </div>
 
             <div id="mods-list" class="flex flex-col gap-3">
                 <div class="text-zinc-400 text-sm" id="mods-empty">Nenhum mod listado no momento.</div>
             </div>
 
-            <!-- Template de cartão de mod -->
             <template id="mod-card-template">
-                <div class="flex gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                    <div class="w-16 h-16 rounded bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center">
+                <div
+                    class="flex gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
+                    <div
+                        class="w-16 h-16 rounded bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center">
                         <span class="material-icons text-zinc-500">image</span>
                     </div>
                     <div class="flex-1 flex flex-col gap-2">
@@ -103,9 +99,14 @@
                         </div>
                         <p class="text-sm text-zinc-300 leading-snug mod-description">Descrição do mod.</p>
                         <div class="flex flex-wrap gap-3 text-xs text-zinc-400">
-                            <span class="flex items-center gap-1"><span class="material-icons text-sm">download</span><span class="mod-downloads">0 downloads</span></span>
-                            <span class="flex items-center gap-1"><span class="material-icons text-sm">update</span><span class="mod-updated">Atualizado</span></span>
-                            <span class="flex items-center gap-1"><span class="material-icons text-sm">label</span><span class="mod-tags">Tags</span></span>
+                            <span class="flex items-center gap-1"><span
+                                    class="material-icons text-sm">download</span><span class="mod-downloads">0
+                                    downloads</span></span>
+                            <span class="flex items-center gap-1"><span
+                                    class="material-icons text-sm">update</span><span
+                                    class="mod-updated">Atualizado</span></span>
+                            <span class="flex items-center gap-1"><span class="material-icons text-sm">label</span><span
+                                    class="mod-tags">Tags</span></span>
                         </div>
                         <div class="flex flex-wrap gap-2 text-xs text-zinc-300 mod-badges">
                             <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700">Adventure</span>
@@ -113,8 +114,10 @@
                         </div>
                     </div>
                     <div class="flex flex-col items-end gap-2 text-sm text-zinc-400">
-                        <button class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-3 py-2 rounded font-semibold">Instalar</button>
-                        <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-xs">Client ou Server</span>
+                        <button
+                            class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-3 py-2 rounded font-semibold">Instalar</button>
+                        <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-xs">Client ou
+                            Server</span>
                     </div>
                 </div>
             </template>

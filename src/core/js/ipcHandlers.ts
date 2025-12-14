@@ -54,16 +54,7 @@ const initIPCHandlers = () => {
             return false;
         }
     });
-    ipcMain.handle('create-instance-folder', async (event, path) => {
-        try {
-            mkdirSync(path, { recursive: true });
-            return path
-        } catch (error) {
-            console.error("Erro ao criar pasta do perfil:", error);
-            return false
-        }
-
-    });
+    
     ipcMain.handle('openDevtools', () => BrowserWindow.getFocusedWindow()?.webContents.openDevTools());
     ipcMain.handle('loginMicrosoft', async (event, clientId: string) => {
         const microsoft = new Microsoft(clientId);

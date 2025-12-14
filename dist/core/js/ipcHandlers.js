@@ -58,16 +58,6 @@ const initIPCHandlers = () => {
             return false;
         }
     }));
-    electron_1.ipcMain.handle('create-instance-folder', (event, path) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            (0, node_fs_1.mkdirSync)(path, { recursive: true });
-            return path;
-        }
-        catch (error) {
-            console.error("Erro ao criar pasta do perfil:", error);
-            return false;
-        }
-    }));
     electron_1.ipcMain.handle('openDevtools', () => { var _a; return (_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.webContents.openDevTools(); });
     electron_1.ipcMain.handle('loginMicrosoft', (event, clientId) => __awaiter(void 0, void 0, void 0, function* () {
         const microsoft = new minecraft_java_core_1.Microsoft(clientId);

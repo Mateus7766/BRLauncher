@@ -31,7 +31,7 @@ class HomePage extends base_js_1.PageBase {
             yield this.manageDropdown();
             const instances = yield this.getMinecraftInstances();
             this.setDropdownInstances(instances || []);
-            yield this.manageProfiles();
+            this.manageProfiles();
             this.initUpdater();
             const play = document.getElementById('play');
             play.addEventListener('click', () => {
