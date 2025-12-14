@@ -29,6 +29,9 @@ class HomePage extends base_js_1.PageBase {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.manageDropdown();
+            const instances = yield this.getMinecraftInstances();
+            this.setDropdownInstances(instances || []);
+            yield this.manageProfiles();
             this.initUpdater();
             const play = document.getElementById('play');
             play.addEventListener('click', () => {
@@ -44,6 +47,67 @@ class HomePage extends base_js_1.PageBase {
                 yield this.setDropdownItem(settings.lastUsed);
             }
         });
+    }
+    manageProfiles() {
+        const addProfileMenu = document.getElementById('add-profile-menu');
+        const openMenuButton = document.getElementById('add-profile');
+        const closeMenuButton = document.getElementById('close-add-profile-menu');
+        const confirmAddProfileButton = document.getElementById('confirm-add-profile');
+        const deleteProfileButton = document.getElementById('delete-profile');
+        deleteProfileButton.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            const profileInput = document.getElementById('profile');
+            const profileName = profileInput.value.trim();
+            if (profileName && profileName.toLowerCase() !== 'nenhum') {
+                const confirmation = confirm(`Tem certeza que deseja deletar o perfil "${profileName}"? Você perderá todos os seus mundos salvos e configurações desse perfil.`);
+                if (!confirmation) {
+                    this.notification("Ação de deletar perfil cancelada.");
+                    return;
+                }
+                const settings = yield launcher_js_2.default.config();
+                if (!settings)
+                    return this.notification("Algo deu errado ao deletar o perfil, tente reiniciar o launcher.");
+                const path = `${settings.path}\\instances\\${profileName}`;
+                const success = yield electron_1.ipcRenderer.invoke('delete-instance-folder', path);
+                if (!success)
+                    return this.notification("Algo deu errado ao deletar o perfil, tente reiniciar o launcher.");
+                this.notification(`Perfil "${profileName}" deletado com sucesso de ${path}!`);
+                const instances = yield this.getMinecraftInstances();
+                this.setDropdownInstances(instances || []);
+                profileInput.value = 'Nenhum';
+                const fake = document.getElementById('fake-instance-select');
+                fake.innerHTML = `<span class="material-icons">folder</span>Nenhum`;
+            }
+            else {
+                this.notification("Você não pode deletar o perfil 'Nenhum', ele é a pasta raiz do jogo.");
+            }
+        }));
+        openMenuButton.addEventListener('click', () => {
+            addProfileMenu.classList.remove('hidden');
+            addProfileMenu.classList.add('flex');
+        });
+        closeMenuButton.addEventListener('click', () => {
+            addProfileMenu.classList.add('hidden');
+            addProfileMenu.classList.remove('flex');
+        });
+        confirmAddProfileButton.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            const profileNameInput = document.getElementById('new-profile-name');
+            const profileName = profileNameInput.value.trim().replace(/ /g, '-');
+            if (profileName) {
+                const settings = yield launcher_js_2.default.config();
+                if (!settings)
+                    return this.notification("Algo deu errado ao criar o perfil, tente reiniciar o launcher.");
+                const path = `${settings.path}\\instances\\${profileName}`;
+                const success = yield electron_1.ipcRenderer.invoke('create-instance-folder', path);
+                if (!success)
+                    return this.notification("Algo deu errado ao criar o perfil, tente reiniciar o launcher.");
+                this.notification(`Perfil "${profileName}" criado com sucesso em ${success}!`);
+                const instances = yield this.getMinecraftInstances();
+                this.setDropdownInstances(instances || []);
+                profileNameInput.value = '';
+                addProfileMenu.classList.add('hidden');
+                addProfileMenu.classList.remove('flex');
+            }
+        }));
     }
     // private async getInstalledVersions(){
     //     const launcherSettings = await LauncherDB.config()
@@ -135,14 +199,43 @@ class HomePage extends base_js_1.PageBase {
             }
         });
     }
+    getMinecraftInstances() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const launcherSettings = yield launcher_js_2.default.config();
+            if (!launcherSettings)
+                return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.");
+            let instances = yield electron_1.ipcRenderer.invoke('getInstances', launcherSettings.path + '\\instances');
+            return instances;
+        });
+    }
+    setDropdownInstances(items) {
+        const instanceSelect = document.getElementById('instance-options');
+        items.unshift('Nenhum');
+        instanceSelect.innerHTML = '';
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-red-500', 'duration-150');
+            div.innerHTML = `<span class="material-icons">folder</span>${item}`;
+            div.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+                const fake = document.getElementById('fake-instance-select');
+                fake.innerHTML = `<span class="material-icons">folder</span>${item}`;
+                const input = document.getElementById('profile');
+                input.value = item;
+            }));
+            instanceSelect.appendChild(div);
+        });
+    }
     startLauncher() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const [type, version] = document.getElementById('version').value.split(' ');
+                let profile = document.getElementById('profile').value || undefined;
+                if ((profile === null || profile === void 0 ? void 0 : profile.toLowerCase()) === 'nenhum')
+                    profile = undefined;
                 const settings = yield launcher_js_2.default.config();
                 yield launcher_js_2.default.update(settings.path, settings.min, settings.max, settings.width, settings.height, settings.elyBy, `${type} ${version}`);
                 const launcher = new launcher_js_1.Launcher();
-                launcher.init(version, type);
+                launcher.init(version, type, profile);
                 const barra = document.getElementById('barra');
                 // barra.style.padding = "0.25rem"
                 launcher.on("progress", (progress, size, element) => {

@@ -13,6 +13,7 @@ exports.initIPCHandlers = void 0;
 const electron_1 = require("electron");
 const discordStatus_js_1 = require("./discordStatus.js");
 const minecraft_java_core_1 = require("minecraft-java-core");
+const node_fs_1 = require("node:fs");
 const discord = new discordStatus_js_1.DiscordStatusManager();
 const initIPCHandlers = () => {
     electron_1.ipcMain.handle("minimize", (event) => { var _a; return (_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.minimize(); });
@@ -27,6 +28,46 @@ const initIPCHandlers = () => {
         });
         return path;
     });
+    electron_1.ipcMain.handle('getInstances', (event, instancesPath) => {
+        try {
+            const instances = (0, node_fs_1.readdirSync)(instancesPath);
+            return instances;
+        }
+        catch (error) {
+            console.error("Erro ao ler pastas de perfis:", error);
+            return [];
+        }
+    });
+    electron_1.ipcMain.handle('delete-instance-folder', (event, path) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            (0, node_fs_1.rmSync)(path, { recursive: true, force: true });
+            return true;
+        }
+        catch (error) {
+            console.error("Erro ao deletar pasta do perfil:", error);
+            return false;
+        }
+    }));
+    electron_1.ipcMain.handle('create-instance-folder', (event, path) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            (0, node_fs_1.mkdirSync)(path, { recursive: true });
+            return path;
+        }
+        catch (error) {
+            console.error("Erro ao criar pasta do perfil:", error);
+            return false;
+        }
+    }));
+    electron_1.ipcMain.handle('create-instance-folder', (event, path) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            (0, node_fs_1.mkdirSync)(path, { recursive: true });
+            return path;
+        }
+        catch (error) {
+            console.error("Erro ao criar pasta do perfil:", error);
+            return false;
+        }
+    }));
     electron_1.ipcMain.handle('openDevtools', () => { var _a; return (_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.webContents.openDevTools(); });
     electron_1.ipcMain.handle('loginMicrosoft', (event, clientId) => __awaiter(void 0, void 0, void 0, function* () {
         const microsoft = new minecraft_java_core_1.Microsoft(clientId);

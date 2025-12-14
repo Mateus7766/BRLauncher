@@ -22,7 +22,7 @@ class Launcher extends minecraft_java_core_1.Launch {
         super();
         console.log("[CLIENT SIDE] CLASSE LAUNCHER CARREGADA");
     }
-    init(version, type) {
+    init(version, type, profile) {
         return __awaiter(this, void 0, void 0, function* () {
             const accounts = yield account_js_1.default.accounts();
             if (!accounts.length) {
@@ -72,6 +72,7 @@ class Launcher extends minecraft_java_core_1.Launch {
                 version: version,
                 detached: false,
                 downloadFileMultiple: 100,
+                instance: profile,
                 loader: {
                     path: "./loaders",
                     type: type,

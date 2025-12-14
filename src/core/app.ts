@@ -3,6 +3,7 @@ import { AccountsPage } from "./js/accounts.js"
 import { PageBase } from "./base.js"
 import { ConfigPage } from "./js/config.js"
 import { AboutPage } from "./js/about.js"
+import { ModsPage } from "./js/mods.js"
 import { readFileSync } from "original-fs"
 import { ipcRenderer, shell } from "electron"
 import Account from "../db/account.js"
@@ -16,6 +17,7 @@ class App {
         await this.initPages([AccountsPage])
         await this.initPages([ConfigPage])
         await this.initPages([AboutPage])
+        await this.initPages([ModsPage])
         await this.sideBar()
         this.topBar()
         this.setPage('home')
@@ -48,7 +50,7 @@ class App {
         active?.classList.remove('block')
         page.classList.add('block')
         page.classList.remove('hidden')
-        ipcRenderer.invoke('changedPage', pageName.replace('home', 'Tela Inicial').replace('accounts', 'Configurando Contas').replace('config', 'Configurando o Launcher').replace('about', 'Lendo o About'))
+        ipcRenderer.invoke('changedPage', pageName.replace('home', 'Tela Inicial').replace('accounts', 'Configurando Contas').replace('config', 'Configurando o Launcher').replace('about', 'Lendo o About').replace('mods', 'Tela de Mods'))
     }
 
     async sideBar() {
@@ -69,6 +71,9 @@ class App {
     }
 
     topBar() {
+        const mods_btn = document.getElementById('mods-btn') as HTMLButtonElement
+        mods_btn.addEventListener('click', () => this.setPage('mods'))
+
         const about_btn = document.getElementById('about-btn') as HTMLButtonElement
         about_btn.addEventListener('click', () => this.setPage('about'))
 

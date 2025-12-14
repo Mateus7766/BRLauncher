@@ -9,7 +9,7 @@ class Launcher extends Launch {
         super()
         console.log("[CLIENT SIDE] CLASSE LAUNCHER CARREGADA")
     }
-    async init(version: string, type: string) {
+    async init(version: string, type: string, profile?: string) {
         const accounts = await Account.accounts()
         if (!accounts.length) {
             alert("Você não pode jogar sem criar uma conta, vá para o menu 'Contas' para criar uma.")
@@ -59,6 +59,7 @@ class Launcher extends Launch {
             version: version,
             detached: false,
             downloadFileMultiple: 100,
+            instance: profile,
             loader: {
                 path: "./loaders",
                 type: type,

@@ -15,6 +15,12 @@ class HomePage extends PageBase {
 
     async init() {
         await this.manageDropdown()
+
+        const instances = await this.getMinecraftInstances()
+        this.setDropdownInstances(instances || [])
+
+        await this.manageProfiles()
+
         this.initUpdater()
         const play = document.getElementById('play') as HTMLButtonElement
 
@@ -32,6 +38,77 @@ class HomePage extends PageBase {
         }
     }
 
+
+    manageProfiles() {
+        const addProfileMenu = document.getElementById('add-profile-menu') as HTMLDivElement
+        const openMenuButton = document.getElementById('add-profile') as HTMLButtonElement
+        const closeMenuButton = document.getElementById('close-add-profile-menu') as HTMLButtonElement
+        const confirmAddProfileButton = document.getElementById('confirm-add-profile') as HTMLButtonElement
+
+        const deleteProfileButton = document.getElementById('delete-profile') as HTMLButtonElement
+
+        deleteProfileButton.addEventListener('click', async () => {
+
+            const profileInput = document.getElementById('profile') as HTMLInputElement
+            const profileName = profileInput.value.trim()
+            if (profileName && profileName.toLowerCase() !== 'nenhum') {
+                const confirmation = confirm(`Tem certeza que deseja deletar o perfil "${profileName}"? Você perderá todos os seus mundos salvos e configurações desse perfil.`)
+                if (!confirmation) {
+                    this.notification("Ação de deletar perfil cancelada.")
+                    return
+                }
+                const settings = await LauncherSettings.config()
+                if (!settings) return this.notification("Algo deu errado ao deletar o perfil, tente reiniciar o launcher.")
+                const path = `${settings.path}\\instances\\${profileName}`
+                const success = await ipcRenderer.invoke('delete-instance-folder', path)
+                if (!success) return this.notification("Algo deu errado ao deletar o perfil, tente reiniciar o launcher.")
+
+                this.notification(`Perfil "${profileName}" deletado com sucesso de ${path}!`)
+
+                const instances = await this.getMinecraftInstances()
+                this.setDropdownInstances(instances || [])
+                
+                profileInput.value = 'Nenhum'
+                const fake = document.getElementById('fake-instance-select') as HTMLElement
+                fake.innerHTML = `<span class="material-icons">folder</span>Nenhum`
+                
+
+            } else {
+                this.notification("Você não pode deletar o perfil 'Nenhum', ele é a pasta raiz do jogo.")
+            }
+        })
+
+        openMenuButton.addEventListener('click', () => {
+            addProfileMenu.classList.remove('hidden')
+            addProfileMenu.classList.add('flex')
+        }
+        )
+        closeMenuButton.addEventListener('click', () => {
+            addProfileMenu.classList.add('hidden')
+            addProfileMenu.classList.remove('flex')
+        }
+        )
+        confirmAddProfileButton.addEventListener('click', async () => {
+            const profileNameInput = document.getElementById('new-profile-name') as HTMLInputElement
+            const profileName = profileNameInput.value.trim().replace(/ /g, '-')
+            if (profileName) {
+                const settings = await LauncherSettings.config()
+                if (!settings) return this.notification("Algo deu errado ao criar o perfil, tente reiniciar o launcher.")
+                const path = `${settings.path}\\instances\\${profileName}`
+                const success = await ipcRenderer.invoke('create-instance-folder', path)
+                if (!success) return this.notification("Algo deu errado ao criar o perfil, tente reiniciar o launcher.")
+                this.notification(`Perfil "${profileName}" criado com sucesso em ${success}!`)
+
+                const instances = await this.getMinecraftInstances()
+                this.setDropdownInstances(instances || [])
+
+                profileNameInput.value = ''
+                addProfileMenu.classList.add('hidden')
+                addProfileMenu.classList.remove('flex')
+            }
+        }
+        )
+    }
     // private async getInstalledVersions(){
     //     const launcherSettings = await LauncherDB.config()
     //     // if(!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
@@ -125,16 +202,45 @@ class HomePage extends PageBase {
         }
     }
 
+    private async getMinecraftInstances() {
+        const launcherSettings = await LauncherSettings.config()
+        if (!launcherSettings) return this.notification("Algo deu errado, tente reiniciar o Launcher com permisões de administrador.")
+        let instances = await ipcRenderer.invoke('getInstances', launcherSettings.path + '\\instances')
+        return instances
+    }
+
+    private setDropdownInstances(items: string[]) {
+        const instanceSelect = document.getElementById('instance-options') as HTMLElement
+
+        items.unshift('Nenhum')
+
+        instanceSelect.innerHTML = ''
+        items.forEach(item => {
+            const div = document.createElement('div')
+            div.classList.add('flex', 'items-center', 'gap-x-3', 'p-2', 'cursor-pointer', 'border-l-0', 'hover:border-l-4', 'border-red-500', 'duration-150')
+            div.innerHTML = `<span class="material-icons">folder</span>${item}`
+            div.addEventListener('click', async () => {
+                const fake = document.getElementById('fake-instance-select') as HTMLElement
+                fake.innerHTML = `<span class="material-icons">folder</span>${item}`
+                const input = document.getElementById('profile') as HTMLInputElement
+                input.value = item
+            })
+            instanceSelect.appendChild(div)
+        })
+    }
+
     async startLauncher() {
         try {
             const [type, version] = (document.getElementById('version') as HTMLInputElement).value.split(' ')
+            let profile = (document.getElementById('profile') as HTMLInputElement).value || undefined
+            if (profile?.toLowerCase() === 'nenhum') profile = undefined
 
             const settings = await LauncherSettings.config();
             await LauncherSettings.update(settings.path, settings.min, settings.max, settings.width, settings.height, settings.elyBy, `${type} ${version}`)
 
 
             const launcher = new Launcher()
-            launcher.init(version, type)
+            launcher.init(version, type, profile)
 
 
             const barra = document.getElementById('barra') as HTMLElement

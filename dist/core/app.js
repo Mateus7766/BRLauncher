@@ -16,6 +16,7 @@ const home_js_1 = require("./js/home.js");
 const accounts_js_1 = require("./js/accounts.js");
 const config_js_1 = require("./js/config.js");
 const about_js_1 = require("./js/about.js");
+const mods_js_1 = require("./js/mods.js");
 const original_fs_1 = require("original-fs");
 const electron_1 = require("electron");
 const account_js_1 = __importDefault(require("../db/account.js"));
@@ -28,6 +29,7 @@ class App {
             yield this.initPages([accounts_js_1.AccountsPage]);
             yield this.initPages([config_js_1.ConfigPage]);
             yield this.initPages([about_js_1.AboutPage]);
+            yield this.initPages([mods_js_1.ModsPage]);
             yield this.sideBar();
             this.topBar();
             this.setPage('home');
@@ -60,7 +62,7 @@ class App {
         active === null || active === void 0 ? void 0 : active.classList.remove('block');
         page.classList.add('block');
         page.classList.remove('hidden');
-        electron_1.ipcRenderer.invoke('changedPage', pageName.replace('home', 'Tela Inicial').replace('accounts', 'Configurando Contas').replace('config', 'Configurando o Launcher').replace('about', 'Lendo o About'));
+        electron_1.ipcRenderer.invoke('changedPage', pageName.replace('home', 'Tela Inicial').replace('accounts', 'Configurando Contas').replace('config', 'Configurando o Launcher').replace('about', 'Lendo o About').replace('mods', 'Tela de Mods'));
     }
     sideBar() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -81,6 +83,8 @@ class App {
         });
     }
     topBar() {
+        const mods_btn = document.getElementById('mods-btn');
+        mods_btn.addEventListener('click', () => this.setPage('mods'));
         const about_btn = document.getElementById('about-btn');
         about_btn.addEventListener('click', () => this.setPage('about'));
         const home_btn = document.getElementById('home-btn');
