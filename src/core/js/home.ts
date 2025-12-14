@@ -19,7 +19,7 @@ class HomePage extends PageBase {
         const instances = await this.getMinecraftInstances()
         this.setDropdownInstances(instances || [])
 
-        await this.manageProfiles()
+        this.manageProfiles()
 
         this.initUpdater()
         const play = document.getElementById('play') as HTMLButtonElement
