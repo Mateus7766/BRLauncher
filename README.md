@@ -36,6 +36,11 @@
 <img src="./.github/images/screen2.png" width="1024px">
 </h1>
 
+## Gerêncie suas modificações
+<h1 align="center">
+<img src="./.github/images/screen5.png" width="1024px">
+</h1>
+
 ## Introdução
 
 É importante informar a todos os usuários deste launcher de Minecraft que o mesmo é uma criação independente e não possui qualquer vínculo oficial com a Mojang AB, nem com suas propriedades intelectuais, incluindo o jogo Minecraft.<br><br>Ressaltamos que o uso deste launcher é opcional, e os jogadores devem estar cientes de que a Mojang AB não assume nenhuma responsabilidade por quaisquer problemas ou conflitos que possam surgir ao utilizar esta plataforma não oficial.
