@@ -1,4 +1,5 @@
 <div class="p-4 overflow-y-scroll h-full no-scrollbar">
+
     <div id="download-animation" class="fixed bottom-4 right-4 hidden z-50">
         <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 shadow-2xl">
             <div class="flex items-center gap-3">
@@ -8,21 +9,21 @@
                 <div class="flex flex-col gap-1">
                     <p class="text-white text-sm font-semibold">Baixando mod...</p>
                     <div class="w-32 h-1 bg-zinc-800 rounded overflow-hidden">
-                        <div class="h-full bg-green-600 rounded animate-pulse" style="width: 0%"></div>
+                        <div class="h-full bg-green-600 rounded animate-pulse" style="width: 100%"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="fixed z-20 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden"
-        id="mod-install-modal" aria-label="Instalar mod">
+
+    <div id="mod-install-modal"
+        class="fixed z-20 backdrop-brightness-50 items-center justify-center h-full w-full top-0 left-0 hidden">
         <div class="bg-zinc-900 p-6 rounded-lg flex flex-col gap-4 shadow-2xl border border-zinc-800"
             style="width: 80%;">
 
             <div class="flex justify-between items-center">
                 <h3 class="text-white text-lg font-semibold">Instalar Mod</h3>
-                <button id="close-mod-install" class="text-zinc-300 hover:bg-zinc-800 rounded p-1 transition-colors"
-                    aria-label="Fechar">
+                <button id="close-mod-install" class="text-zinc-300 hover:bg-zinc-800 rounded p-1 transition-colors">
                     <span class="material-icons">close</span>
                 </button>
             </div>
@@ -30,34 +31,28 @@
             <div class="flex flex-col gap-1">
                 <label class="text-sm text-zinc-400">Versão do Minecraft</label>
                 <select id="install-game-version"
-                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
-                    <option value="">Selecionar versão</option>
-                </select>
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-white"></select>
             </div>
 
             <div class="flex flex-col gap-1">
                 <label class="text-sm text-zinc-400">Loader</label>
                 <select id="install-loader"
-                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
-                    <option value="">Selecionar loader</option>
-                </select>
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-white"></select>
             </div>
 
             <div class="flex flex-col gap-1">
                 <label class="text-sm text-zinc-400">Perfil</label>
                 <select id="install-profile"
-                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 outline-none text-white">
-                    <option value="">Selecionar perfil</option>
-                </select>
+                    class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-white"></select>
             </div>
 
             <div class="flex justify-end gap-2 pt-2">
                 <button id="cancel-mod-install"
-                    class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded transition-colors">
+                    class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-4 py-2 rounded">
                     Cancelar
                 </button>
                 <button id="confirm-mod-install"
-                    class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition-colors text-white font-semibold">
+                    class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold">
                     Instalar
                 </button>
             </div>
@@ -65,63 +60,46 @@
         </div>
     </div>
 
-    <div class="flex items-start gap-4 h-full">
-        <main class="flex-1 flex flex-col gap-4">
-            <header class="flex flex-col gap-2">
-                <h2 class="text-2xl font-bold text-white">Modificações</h2>
-                <p class="text-zinc-300 text-sm">Gerencie, organize e descubra mods para personalizar sua experiência de
-                    jogo.</p>
-            </header>
+    <main class="flex flex-col gap-4">
 
-            <div class="flex flex-wrap gap-3 items-center bg-zinc-900 border border-zinc-800 rounded-lg p-3">
-                <div
-                    class="flex items-center gap-2 flex-1 min-w-[220px] bg-zinc-950 border border-zinc-800 rounded px-3 py-2">
-                    <span class="material-icons text-zinc-400">search</span>
-                    <input id="mods-search" type="text" placeholder="Buscar mods"
-                        class="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-zinc-500">
-                </div>
+        <header>
+            <h2 class="text-2xl font-bold text-white">Modificações</h2>
+            <p class="text-zinc-300 text-sm">Busque e instale mods via Modrinth</p>
+        </header>
+
+        <div class="flex flex-wrap gap-3 items-center bg-zinc-900 border border-zinc-800 rounded-lg p-3">
+
+            <div
+                class="flex items-center gap-2 flex-1 min-w-[220px] bg-zinc-950 border border-zinc-800 rounded px-3 py-2">
+                <span class="material-icons text-zinc-400">search</span>
+                <input id="mods-search" type="text" placeholder="Buscar mods"
+                    class="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-zinc-500">
             </div>
 
-            <div id="mods-list" class="flex flex-col gap-3">
-                <div class="text-zinc-400 text-sm" id="mods-empty">Nenhum mod listado no momento.</div>
-            </div>
+            <select id="filter-loader" class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-white">
+                <option value="">Loader</option>
+                <option value="fabric">Fabric</option>
+                <option value="forge">Forge</option>
+                <option value="quilt">Quilt</option>
+                <option value="neoforge">NeoForge</option>
+            </select>
 
-            <template id="mod-card-template">
-                <div
-                    class="flex gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors">
-                    <div
-                        class="w-16 h-16 rounded bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center">
-                        <span class="material-icons text-zinc-500">image</span>
-                    </div>
-                    <div class="flex-1 flex flex-col gap-2">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <p class="text-white font-semibold text-lg leading-tight mod-name">Nome do Mod</p>
-                            <span class="text-zinc-400 text-xs mod-author">por Autor</span>
-                        </div>
-                        <p class="text-sm text-zinc-300 leading-snug mod-description">Descrição do mod.</p>
-                        <div class="flex flex-wrap gap-3 text-xs text-zinc-400">
-                            <span class="flex items-center gap-1"><span
-                                    class="material-icons text-sm">download</span><span class="mod-downloads">0
-                                    downloads</span></span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-icons text-sm">update</span><span
-                                    class="mod-updated">Atualizado</span></span>
-                            <span class="flex items-center gap-1"><span class="material-icons text-sm">label</span><span
-                                    class="mod-tags">Tags</span></span>
-                        </div>
-                        <div class="flex flex-wrap gap-2 text-xs text-zinc-300 mod-badges">
-                            <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700">Adventure</span>
-                            <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700">Fabric</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-end gap-2 text-sm text-zinc-400">
-                        <button
-                            class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white px-3 py-2 rounded font-semibold">Instalar</button>
-                        <span class="px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-xs">Client ou
-                            Server</span>
-                    </div>
-                </div>
-            </template>
-        </main>
-    </div>
+            <select id="filter-version" class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-white">
+                <option value="">Versão</option>
+            </select>
+
+            <select id="filter-sort" class="bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm text-white">
+                <option value="relevance">Relevância</option>
+                <option value="downloads">Downloads</option>
+                <option value="follows">Seguidores</option>
+                <option value="updated">Atualizado</option>
+            </select>
+
+        </div>
+
+        <div id="mods-list" class="flex flex-col gap-3">
+            <div class="text-zinc-400 text-sm">Digite algo para buscar mods.</div>
+        </div>
+
+    </main>
 </div>

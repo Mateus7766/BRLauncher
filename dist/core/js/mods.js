@@ -27,9 +27,26 @@ class ModsPage extends base_1.PageBase {
         this.selectedModId = null;
         this.searchMods = (query) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const versionInput = document.getElementById('filter-version');
+                const loaderInput = document.getElementById('filter-loader');
+                const sort = document.getElementById('filter-sort');
+                const facets = [
+                    ["project_type:mod"]
+                ];
+                // if (sort.value) {
+                //     facets.push([`sort:${sort.value}`]);
+                // }
+                if (versionInput.value) {
+                    facets.push([`versions:${versionInput.value}`]);
+                }
+                if (loaderInput.value) {
+                    facets.push([`categories:${loaderInput.value}`]);
+                }
+                const facetString = JSON.stringify(facets);
                 const results = yield this.client.searchProjects({
                     query: query,
-                    facets: '[["project_type:mod"]]',
+                    facets: facetString,
+                    index: sort.value || 'relevance',
                     limit: 300,
                 });
                 return results.hits;
@@ -69,18 +86,24 @@ class ModsPage extends base_1.PageBase {
             modListContainer.innerHTML = '';
             mods.forEach((mod, i) => {
                 const modElement = document.createElement('div');
-                modElement.classList.add('flex', 'mod-item', 'p-4', 'border-b', 'border-gray-300', 'hover:shadow-lg', 'cursor-pointer', 'bg-zinc-900', 'rounded-md', 'mb-2', 'items-center', 'space-x-4');
+                modElement.id = `mod-${mod.slug}`;
+                modElement.title = 'Clique para abrir a página do mod no navegador';
+                modElement.classList.add('flex', 'mod-item', 'p-4', 'border', 'border-zinc-800', 'hover:shadow-lg', 'cursor-pointer', 'bg-zinc-900', 'rounded-md', 'mb-2', 'items-center', 'space-x-4');
                 modElement.innerHTML = `
                 <img src="${mod.icon_url}" alt="${mod.title} Icon" class="w-16 h-16 rounded-md mb-2">
                 <div class="flex-1">
                     <h3 class="text-lg font-bold">${mod.title}</h3>
                     <p class="text-sm text-gray-600">${mod.description}</p>
                 </div>
-                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" id="download-${i}">Download</button>
+                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 justify-center" id="download-${i}"><span class="material-icons">download</span> Download</button>
             `;
                 modListContainer.appendChild(modElement);
+                modElement.addEventListener('click', () => {
+                    electron_1.shell.openExternal(`https://modrinth.com/mod/${mod.slug}`);
+                });
                 const downloadButton = document.getElementById(`download-${i}`);
-                downloadButton.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+                downloadButton.addEventListener('click', (e) => __awaiter(this, void 0, void 0, function* () {
+                    e.stopPropagation();
                     const modInstallModal = document.getElementById('mod-install-modal');
                     modInstallModal.classList.remove('hidden');
                     modInstallModal.classList.add('flex');
@@ -169,12 +192,39 @@ class ModsPage extends base_1.PageBase {
             this.initSearch();
         });
     }
+    getVanillaVersions() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let vanilla = (yield (yield fetch("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")).json()).versions.filter(v => v.type === "release").map(v => v.id);
+            return vanilla;
+        });
+    }
     initSearch() {
-        const searchInput = document.getElementById('mods-search');
-        searchInput.addEventListener('input', () => __awaiter(this, void 0, void 0, function* () {
-            const query = searchInput.value.trim();
-            yield this.updateModList(query);
-        }));
+        return __awaiter(this, void 0, void 0, function* () {
+            const mineVersions = yield this.getVanillaVersions();
+            const searchInput = document.getElementById('mods-search');
+            const versionInput = document.getElementById('filter-version');
+            const sort = document.getElementById('filter-sort');
+            sort.addEventListener('change', () => __awaiter(this, void 0, void 0, function* () {
+                const query = searchInput.value.trim();
+                yield this.updateModList(query);
+            }));
+            mineVersions.forEach((version) => {
+                versionInput.options.add(new Option(version, version));
+            });
+            const loaderInput = document.getElementById('filter-loader');
+            searchInput.addEventListener('input', () => __awaiter(this, void 0, void 0, function* () {
+                const query = searchInput.value.trim();
+                yield this.updateModList(query);
+            }));
+            versionInput.addEventListener('change', () => __awaiter(this, void 0, void 0, function* () {
+                const query = searchInput.value.trim();
+                yield this.updateModList(query);
+            }));
+            loaderInput.addEventListener('change', () => __awaiter(this, void 0, void 0, function* () {
+                const query = searchInput.value.trim();
+                yield this.updateModList(query);
+            }));
+        });
     }
     getMinecraftInstances() {
         return __awaiter(this, void 0, void 0, function* () {

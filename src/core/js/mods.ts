@@ -1,9 +1,10 @@
 import { PageBase } from "../base";
 import { ModrinthV2Client, SearchResultHit } from "@xmcl/modrinth";
-import { ipcRenderer } from "electron";
+import { ipcRenderer, shell } from "electron";
 import LauncherSettings from "../../db/launcher";
 import { join } from "path";
 import fs from "fs";
+import { MineAPI } from "../../interfaces/launcher";
 
 class ModsPage extends PageBase {
     client: ModrinthV2Client;
@@ -27,9 +28,32 @@ class ModsPage extends PageBase {
 
     private searchMods = async (query: string): Promise<SearchResultHit[]> => {
         try {
+            const versionInput = document.getElementById('filter-version') as HTMLSelectElement;
+            const loaderInput = document.getElementById('filter-loader') as HTMLSelectElement;
+            const sort = document.getElementById('filter-sort') as HTMLSelectElement;
+
+            const facets: string[][] = [
+                ["project_type:mod"]
+            ];
+
+            // if (sort.value) {
+            //     facets.push([`sort:${sort.value}`]);
+            // }
+
+            if (versionInput.value) {
+                facets.push([`versions:${versionInput.value}`]);
+            }
+
+            if (loaderInput.value) {
+                facets.push([`categories:${loaderInput.value}`]);
+            }
+
+            const facetString = JSON.stringify(facets);
+
             const results = await this.client.searchProjects({
                 query: query,
-                facets: '[["project_type:mod"]]',
+                facets: facetString,
+                index: sort.value || 'relevance',
                 limit: 300,
             });
             return results.hits;
@@ -39,12 +63,47 @@ class ModsPage extends PageBase {
         }
     }
 
-    private initSearch() {
+    private async getVanillaVersions() { // Importado do Home.ts
+        let vanilla = (await (await fetch("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")).json() as MineAPI).versions.filter(v => v.type === "release").map(v => v.id)
+        return vanilla
+    }
+
+    private async initSearch() {
+
+        const mineVersions = await this.getVanillaVersions();
+
+
+
         const searchInput = document.getElementById('mods-search') as HTMLInputElement;
+        const versionInput = document.getElementById('filter-version') as HTMLSelectElement;
+        const sort = document.getElementById('filter-sort') as HTMLSelectElement;
+
+        sort.addEventListener('change', async () => {
+            const query = searchInput.value.trim();
+            await this.updateModList(query);
+        }); 
+
+        mineVersions.forEach((version) => {
+            versionInput.options.add(new Option(version, version));
+        });
+
+        const loaderInput = document.getElementById('filter-loader') as HTMLSelectElement;
+
         searchInput.addEventListener('input', async () => {
             const query = searchInput.value.trim();
             await this.updateModList(query);
         });
+
+        versionInput.addEventListener('change', async () => {
+            const query = searchInput.value.trim();
+            await this.updateModList(query);
+        });
+
+        loaderInput.addEventListener('change', async () => {
+            const query = searchInput.value.trim();
+            await this.updateModList(query);
+        });
+
     }
 
     private async getMinecraftInstances() {
@@ -88,19 +147,25 @@ class ModsPage extends PageBase {
         modListContainer.innerHTML = '';
         mods.forEach((mod, i) => {
             const modElement = document.createElement('div');
-            modElement.classList.add('flex', 'mod-item', 'p-4', 'border-b', 'border-gray-300', 'hover:shadow-lg', 'cursor-pointer', 'bg-zinc-900', 'rounded-md', 'mb-2', 'items-center', 'space-x-4');
+            modElement.id = `mod-${mod.slug}`;
+            modElement.classList.add('flex', 'mod-item', 'p-4', 'border', 'border-zinc-800', 'hover:shadow-lg', 'cursor-pointer', 'bg-zinc-900', 'rounded-md', 'mb-2', 'items-center', 'space-x-4');
             modElement.innerHTML = `
                 <img src="${mod.icon_url}" alt="${mod.title} Icon" class="w-16 h-16 rounded-md mb-2">
                 <div class="flex-1">
                     <h3 class="text-lg font-bold">${mod.title}</h3>
                     <p class="text-sm text-gray-600">${mod.description}</p>
                 </div>
-                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" id="download-${i}">Download</button>
+                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2 justify-center" id="download-${i}"><span class="material-icons">download</span> Download</button>
             `;
             modListContainer.appendChild(modElement);
 
+            modElement.addEventListener('click', () => {
+                shell.openExternal(`https://modrinth.com/mod/${mod.slug}`);
+            });
+
             const downloadButton = document.getElementById(`download-${i}`) as HTMLButtonElement;
-            downloadButton.addEventListener('click', async () => {
+            downloadButton.addEventListener('click', async (e) => {
+                e.stopPropagation();
                 const modInstallModal = document.getElementById('mod-install-modal') as HTMLDivElement;
                 modInstallModal.classList.remove('hidden');
                 modInstallModal.classList.add('flex');
