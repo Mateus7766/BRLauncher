@@ -173,6 +173,7 @@ class ModsPage extends base_1.PageBase {
                 }
                 fs_1.default.writeFileSync((0, path_1.join)(instancesPath, "mods", arquivo.filename), Buffer.from(buffer));
                 this.notification(`Mod ${mod.title} baixado com sucesso para o diretorio ${(0, path_1.join)(instancesPath, "mods")}`);
+                this.refreshMods();
                 downloadLoadingModal.classList.add('hidden');
                 downloadLoadingModal.classList.remove('relative');
             }
@@ -323,7 +324,12 @@ class ModsPage extends base_1.PageBase {
         const version = document.createElement("span");
         version.className = "text-sm text-zinc-400";
         version.innerText = mod.version || "";
-        info.append(name, version);
+        const logo = document.createElement("img");
+        logo.className = "w-12 h-12 mr-4 rounded-md";
+        const loader = document.createElement("span");
+        loader.className = "text-sm text-zinc-400";
+        loader.innerText = `Loader: ${mod.loader}`;
+        info.append(name, version, loader);
         const actions = document.createElement("div");
         actions.className = "flex gap-2";
         const toggleBtn = document.createElement("button");
