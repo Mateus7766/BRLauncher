@@ -58,9 +58,22 @@ export interface ConfigPage {
     pageName: string
 }
 
+export interface ModInfo {
+    loader: string;
+    id?: string;
+    name?: string;
+    version: string;
+    description?: string;
+    icon?: string;
+    logo?: string;
+    file: string;
+    enabled: boolean;
+    filePath: string;
+}
+
 export interface AccountCreate {
     access_token: string,
-    client_token:string,
+    client_token: string,
     uuid: string,
     name: string,
     user_properties: {},
@@ -72,7 +85,7 @@ export interface AccountCreate {
 }
 
 export interface ForgeAPI {
-    
+
 }
 
 type QuiltAPIGAME = {
@@ -92,4 +105,4 @@ export type Events = {
     "unpacking": () => void
     "copy": () => void
     "finished": () => void;
-  };
+};

@@ -19,6 +19,7 @@ const electron_1 = require("electron");
 const launcher_1 = __importDefault(require("../../db/launcher"));
 const path_1 = require("path");
 const fs_1 = __importDefault(require("fs"));
+const mod_parser_1 = require("@xmcl/mod-parser");
 class ModsPage extends base_1.PageBase {
     constructor() {
         super({
@@ -87,7 +88,6 @@ class ModsPage extends base_1.PageBase {
             mods.forEach((mod, i) => {
                 const modElement = document.createElement('div');
                 modElement.id = `mod-${mod.slug}`;
-                modElement.title = 'Clique para abrir a página do mod no navegador';
                 modElement.classList.add('flex', 'mod-item', 'p-4', 'border', 'border-zinc-800', 'hover:shadow-lg', 'cursor-pointer', 'bg-zinc-900', 'rounded-md', 'mb-2', 'items-center', 'space-x-4');
                 modElement.innerHTML = `
                 <img src="${mod.icon_url}" alt="${mod.title} Icon" class="w-16 h-16 rounded-md mb-2">
@@ -186,6 +186,8 @@ class ModsPage extends base_1.PageBase {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.updateModList('');
+            this.initSelectProfile();
+            this.getInstalledMods();
             this.initConfirmDownloadBtn();
             this.initCancelDownloadBtn();
             this.initCloseBtn();
@@ -234,6 +236,129 @@ class ModsPage extends base_1.PageBase {
             let instances = yield electron_1.ipcRenderer.invoke('getInstances', launcherSettings.path + '\\instances');
             return instances;
         });
+    }
+    initSelectProfile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profileSelect = document.getElementById('installed-mods-profile');
+            profileSelect.options.length = 0;
+            profileSelect.options.add(new Option('Perfil Padrão', ''));
+            const instances = yield this.getMinecraftInstances();
+            instances.forEach((instance) => {
+                profileSelect.options.add(new Option(instance, instance));
+            });
+            profileSelect.addEventListener('change', () => __awaiter(this, void 0, void 0, function* () {
+                yield this.getInstalledMods(profileSelect.value);
+            }));
+        });
+    }
+    getInstalledMods(instanceName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Instancia selecionada para ver mods:", instanceName);
+            const path = yield launcher_1.default.config();
+            if (!path)
+                return;
+            const modsPath = instanceName
+                ? (0, path_1.join)(path.path, 'instances', instanceName, "mods")
+                : (0, path_1.join)(path.path, "mods");
+            const container = document.getElementById("installed-mods-list");
+            container.innerHTML = "";
+            fs_1.default.readdir(modsPath, (err, files) => __awaiter(this, void 0, void 0, function* () {
+                if (err) {
+                    console.error("Erro ao ler o diretório de mods:", err);
+                    return;
+                }
+                for (const file of files) {
+                    const isDisabled = file.endsWith(".disabled");
+                    const isValid = file.endsWith(".jar") || isDisabled;
+                    if (!isValid)
+                        continue;
+                    const filePath = (0, path_1.join)(modsPath, file);
+                    const realName = isDisabled
+                        ? file.replace(".disabled", "")
+                        : file;
+                    let modInfo = {
+                        loader: "unknown",
+                        name: realName.replace(".jar", ""),
+                        version: "unknown",
+                        file,
+                        filePath,
+                        enabled: !isDisabled
+                    };
+                    if (!isDisabled) {
+                        const buffer = fs_1.default.readFileSync(filePath);
+                        try {
+                            const fabric = yield (0, mod_parser_1.readFabricMod)(buffer);
+                            modInfo = Object.assign(Object.assign({}, modInfo), { loader: "fabric", id: fabric.id, name: fabric.name, version: fabric.version, description: fabric.description, icon: fabric.icon });
+                        }
+                        catch (_a) { }
+                        if (modInfo.loader === "unknown") {
+                            try {
+                                const forge = yield (0, mod_parser_1.readForgeMod)(buffer);
+                                const mod = forge.modAnnotations.find(m => m.modId);
+                                if (mod) {
+                                    modInfo = Object.assign(Object.assign({}, modInfo), { loader: "forge", id: mod.modId, name: mod.displayName, version: mod.version, description: mod.description, logo: mod.logoFile });
+                                }
+                            }
+                            catch (_b) { }
+                        }
+                    }
+                    this.createInstalledModElement(modInfo);
+                }
+            }));
+        });
+    }
+    createInstalledModElement(mod) {
+        const container = document.getElementById("installed-mods-list");
+        const modEl = document.createElement("div");
+        modEl.className = `
+            p-3 mb-2 rounded-md border border-zinc-800 bg-zinc-900
+            flex items-center justify-between gap-4
+            ${!mod.enabled ? "opacity-50" : ""}
+        `;
+        const info = document.createElement("div");
+        info.className = "flex flex-col";
+        const name = document.createElement("span");
+        name.className = "font-medium";
+        name.innerText = mod.name || "Unknown Mod";
+        const version = document.createElement("span");
+        version.className = "text-sm text-zinc-400";
+        version.innerText = mod.version || "";
+        info.append(name, version);
+        const actions = document.createElement("div");
+        actions.className = "flex gap-2";
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className =
+            "px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700";
+        toggleBtn.innerText = mod.enabled ? "Desativar" : "Ativar";
+        toggleBtn.onclick = () => this.toggleMod(mod);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className =
+            "px-2 py-1 rounded bg-red-600 hover:bg-red-500";
+        deleteBtn.innerText = "Remover";
+        deleteBtn.onclick = () => this.uninstallMod(mod);
+        actions.append(toggleBtn, deleteBtn);
+        modEl.append(info, actions);
+        container.appendChild(modEl);
+    }
+    toggleMod(mod) {
+        const newPath = mod.enabled
+            ? mod.filePath + ".disabled"
+            : mod.filePath.replace(".disabled", "");
+        fs_1.default.renameSync(mod.filePath, newPath);
+        this.notification(mod.enabled ? "Mod desativado" : "Mod ativado");
+        this.refreshMods();
+    }
+    uninstallMod(mod) {
+        if (!confirm(`Remover o mod "${mod.name}"?`))
+            return;
+        fs_1.default.unlinkSync(mod.filePath);
+        this.notification("Mod removido com sucesso");
+        this.refreshMods();
+    }
+    refreshMods() {
+        const profileSelect = document.getElementById('installed-mods-profile');
+        const instanceName = profileSelect.value || undefined;
+        this.getInstalledMods(instanceName);
     }
 }
 exports.ModsPage = ModsPage;

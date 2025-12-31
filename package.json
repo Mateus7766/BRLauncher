@@ -20,6 +20,7 @@
     "@prisma/client": "^7.1.0",
     "@types/discord-rich-presence": "^0.0.0",
     "@types/shelljs": "^0.8.12",
+    "@xmcl/mod-parser": "^3.4.2",
     "@xmcl/modrinth": "^2.5.0",
     "appdata-path": "^1.0.0",
     "axios": "^1.4.0",

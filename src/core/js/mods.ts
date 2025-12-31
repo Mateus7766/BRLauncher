@@ -5,6 +5,9 @@ import LauncherSettings from "../../db/launcher";
 import { join } from "path";
 import fs from "fs";
 import { MineAPI } from "../../interfaces/launcher";
+import { readFabricMod, readForgeMod } from "@xmcl/mod-parser";
+import { ModInfo } from "../../interfaces/launcher";
+
 
 class ModsPage extends PageBase {
     client: ModrinthV2Client;
@@ -20,6 +23,8 @@ class ModsPage extends PageBase {
     }
     async init() {
         await this.updateModList('');
+        this.initSelectProfile();
+        this.getInstalledMods();
         this.initConfirmDownloadBtn();
         this.initCancelDownloadBtn();
         this.initCloseBtn();
@@ -81,7 +86,7 @@ class ModsPage extends PageBase {
         sort.addEventListener('change', async () => {
             const query = searchInput.value.trim();
             await this.updateModList(query);
-        }); 
+        });
 
         mineVersions.forEach((version) => {
             versionInput.options.add(new Option(version, version));
@@ -262,6 +267,176 @@ class ModsPage extends PageBase {
         } catch (error) {
             console.error("Erro ao baixar o mod:", error);
         }
+    }
+
+    async initSelectProfile() {
+        const profileSelect = document.getElementById('installed-mods-profile') as HTMLSelectElement;
+
+        profileSelect.options.length = 0;
+        profileSelect.options.add(new Option('Perfil Padrão', ''));
+        const instances = await this.getMinecraftInstances();
+        instances.forEach((instance: string) => {
+            profileSelect.options.add(new Option(instance, instance));
+        });
+
+        profileSelect.addEventListener('change', async () => {
+            await this.getInstalledMods(profileSelect.value);
+        });
+    }
+
+
+    async getInstalledMods(instanceName?: string) {
+
+        console.log("Instancia selecionada para ver mods:", instanceName);
+
+        const path = await LauncherSettings.config();
+        if (!path) return;
+
+        const modsPath = instanceName
+            ? join(path.path, 'instances', instanceName, "mods")
+            : join(path.path, "mods");
+
+        const container = document.getElementById(
+            "installed-mods-list"
+        ) as HTMLDivElement;
+
+        container.innerHTML = "";
+
+        fs.readdir(modsPath, async (err, files) => {
+            if (err) {
+                console.error("Erro ao ler o diretório de mods:", err);
+                return;
+            }
+
+            for (const file of files) {
+                const isDisabled = file.endsWith(".disabled");
+                const isValid = file.endsWith(".jar") || isDisabled;
+                if (!isValid) continue;
+
+                const filePath = join(modsPath, file);
+                const realName = isDisabled
+                    ? file.replace(".disabled", "")
+                    : file;
+
+                let modInfo: ModInfo = {
+                    loader: "unknown",
+                    name: realName.replace(".jar", ""),
+                    version: "unknown",
+                    file,
+                    filePath,
+                    enabled: !isDisabled
+                };
+
+                if (!isDisabled) {
+                    const buffer = fs.readFileSync(filePath);
+
+                    try {
+                        const fabric = await readFabricMod(buffer);
+                        modInfo = {
+                            ...modInfo,
+                            loader: "fabric",
+                            id: fabric.id,
+                            name: fabric.name,
+                            version: fabric.version,
+                            description: fabric.description,
+                            icon: fabric.icon
+                        };
+                    } catch { }
+
+                    if (modInfo.loader === "unknown") {
+                        try {
+                            const forge = await readForgeMod(buffer);
+                            const mod = forge.modAnnotations.find(m => m.modId);
+                            if (mod) {
+                                modInfo = {
+                                    ...modInfo,
+                                    loader: "forge",
+                                    id: mod.modId,
+                                    name: mod.displayName,
+                                    version: mod.version,
+                                    description: mod.description,
+                                    logo: mod.logoFile
+                                };
+                            }
+                        } catch { }
+                    }
+                }
+
+                this.createInstalledModElement(modInfo);
+            }
+        });
+    }
+
+
+    createInstalledModElement(mod: ModInfo) {
+        const container = document.getElementById(
+            "installed-mods-list"
+        ) as HTMLDivElement;
+
+        const modEl = document.createElement("div");
+        modEl.className = `
+            p-3 mb-2 rounded-md border border-zinc-800 bg-zinc-900
+            flex items-center justify-between gap-4
+            ${!mod.enabled ? "opacity-50" : ""}
+        `;
+
+        const info = document.createElement("div");
+        info.className = "flex flex-col";
+
+        const name = document.createElement("span");
+        name.className = "font-medium";
+        name.innerText = mod.name || "Unknown Mod";
+
+        const version = document.createElement("span");
+        version.className = "text-sm text-zinc-400";
+        version.innerText = mod.version || "";
+
+        info.append(name, version);
+
+        const actions = document.createElement("div");
+        actions.className = "flex gap-2";
+
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className =
+            "px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700";
+        toggleBtn.innerText = mod.enabled ? "Desativar" : "Ativar";
+        toggleBtn.onclick = () => this.toggleMod(mod);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className =
+            "px-2 py-1 rounded bg-red-600 hover:bg-red-500";
+        deleteBtn.innerText = "Remover";
+        deleteBtn.onclick = () => this.uninstallMod(mod);
+
+        actions.append(toggleBtn, deleteBtn);
+        modEl.append(info, actions);
+        container.appendChild(modEl);
+    }
+
+
+    toggleMod(mod: ModInfo) {
+        const newPath = mod.enabled
+            ? mod.filePath + ".disabled"
+            : mod.filePath.replace(".disabled", "");
+
+        fs.renameSync(mod.filePath, newPath);
+        this.notification(
+            mod.enabled ? "Mod desativado" : "Mod ativado"
+        );
+        this.refreshMods();
+    }
+
+    uninstallMod(mod: ModInfo) {
+        if (!confirm(`Remover o mod "${mod.name}"?`)) return;
+        fs.unlinkSync(mod.filePath);
+        this.notification("Mod removido com sucesso");
+        this.refreshMods();
+    }
+
+    refreshMods() {
+        const profileSelect = document.getElementById('installed-mods-profile') as HTMLSelectElement;
+        const instanceName = profileSelect.value || undefined;
+        this.getInstalledMods(instanceName);
     }
 }
 
