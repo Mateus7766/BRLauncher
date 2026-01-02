@@ -107,6 +107,33 @@
             </p>
         </div>
 
+        <div class="flex flex-col gap-3 bg-zinc-900 p-4 rounded-lg border border-zinc-800">
+            <label class="text-lg font-semibold text-white flex items-center gap-2">
+                <span class="material-icons text-red-500">smart_toy</span>
+                Rich Presence do Discord
+            </label>
+
+            <div class="flex items-center justify-between">
+                <span id="discordStatus" class="text-sm text-zinc-300"></span>
+
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggleDiscordPresence" class="sr-only peer" aria-label="Ativar Rich Presence do Discord">
+                    <div class="w-14 h-7 bg-zinc-700 peer-focus:outline-2 peer-focus:outline-red-500 rounded-full peer 
+                       peer-checked:after:translate-x-full peer-checked:after:border-white 
+                       after:content-[''] after:absolute after:top-0.5 after:left-[4px] 
+                       after:bg-white after:border-zinc-300 after:border after:rounded-full 
+                       after:h-6 after:w-6 after:transition-all 
+                       peer-checked:bg-red-500">
+                    </div>
+                </label>
+            </div>
+
+            <p class="text-sm text-zinc-400 flex items-center gap-2">
+                <span class="material-icons text-sm mt-0.5">info</span>
+                <span>Ative para mostrar o que está jogando no seu status do Discord.</span>
+            </p>
+        </div>
+
         <div class="flex gap-3 pt-4">
             <button 
                 class="play-btn flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold transition-all hover:shadow-lg" 

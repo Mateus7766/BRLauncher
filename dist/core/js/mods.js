@@ -254,7 +254,7 @@ class ModsPage extends base_1.PageBase {
     }
     getInstalledMods(instanceName) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Instancia selecionada para ver mods:", instanceName);
+            // console.log("Instancia selecionada para ver mods:", instanceName);
             const path = yield launcher_1.default.config();
             if (!path)
                 return;
