@@ -130,27 +130,46 @@ class ModsPage extends base_1.PageBase {
                 }));
             });
         });
+        this.moveToLocalMods = () => {
+            const hrefMod = document.getElementById('href-mods');
+            hrefMod.addEventListener('click', () => {
+                const el = document.getElementById("installed-mods-title");
+                if (el)
+                    el.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+            });
+        };
         this.dowloadMod = () => __awaiter(this, void 0, void 0, function* () {
             try {
+                const downloadLoadingModal = document.getElementById('loading');
+                const loadingText = document.getElementById('loading-text');
+                loadingText.innerHTML = 'Iniciando download...';
+                downloadLoadingModal.classList.remove('hidden');
+                downloadLoadingModal.classList.add('flex');
                 const modId = this.selectedModId;
                 if (!modId) {
                     this.notification("Nenhum mod selecionado para download.");
+                    downloadLoadingModal.classList.add('hidden');
+                    downloadLoadingModal.classList.remove('flex');
                     return;
                 }
                 const mod = yield this.client.getProject(modId);
+                loadingText.innerHTML = `Baixando o mod ${mod.title}...`;
                 const versions = yield this.client.getProjectVersions(modId);
                 if (versions.length === 0) {
                     this.notification("Nenhuma versão compatível encontrada para os critérios selecionados.");
+                    downloadLoadingModal.classList.add('hidden');
+                    downloadLoadingModal.classList.remove('flex');
                     return;
                 }
                 const latestVersion = versions[0];
                 if (latestVersion.files.length === 0) {
                     this.notification("Nenhum arquivo encontrado para a versão do mod: " + latestVersion.name);
+                    downloadLoadingModal.classList.add('hidden');
+                    downloadLoadingModal.classList.remove('flex');
                     return;
                 }
-                const downloadLoadingModal = document.getElementById('download-animation');
-                downloadLoadingModal.classList.remove('hidden');
-                downloadLoadingModal.classList.add('relative');
                 const versionSelect = document.getElementById('install-game-version');
                 const loaderSelect = document.getElementById('install-loader');
                 const profileSelect = document.getElementById('install-profile');
@@ -161,6 +180,8 @@ class ModsPage extends base_1.PageBase {
                     v.loaders.includes(loaderSelect.value));
                 if (!versao) {
                     this.notification("Nenhuma versão compatível encontrada para os critérios selecionados.");
+                    downloadLoadingModal.classList.add('hidden');
+                    downloadLoadingModal.classList.remove('flex');
                     return;
                 }
                 const arquivo = versao.files[0];
@@ -172,13 +193,16 @@ class ModsPage extends base_1.PageBase {
                     fs_1.default.mkdirSync((0, path_1.join)(instancesPath, "mods"), { recursive: true });
                 }
                 fs_1.default.writeFileSync((0, path_1.join)(instancesPath, "mods", arquivo.filename), Buffer.from(buffer));
-                this.notification(`Mod ${mod.title} baixado com sucesso para o diretorio ${(0, path_1.join)(instancesPath, "mods")}`);
+                this.notification(`Mod ${mod.title} baixado com sucesso.`);
                 this.refreshMods();
                 downloadLoadingModal.classList.add('hidden');
-                downloadLoadingModal.classList.remove('relative');
+                downloadLoadingModal.classList.remove('flex');
             }
             catch (error) {
                 console.error("Erro ao baixar o mod:", error);
+                const downloadLoadingModal = document.getElementById('loading');
+                downloadLoadingModal.classList.add('hidden');
+                downloadLoadingModal.classList.remove('flex');
             }
         });
         this.client = new modrinth_1.ModrinthV2Client();
@@ -193,6 +217,7 @@ class ModsPage extends base_1.PageBase {
             this.initCancelDownloadBtn();
             this.initCloseBtn();
             this.initSearch();
+            this.moveToLocalMods();
         });
     }
     getVanillaVersions() {

@@ -29,6 +29,7 @@ class ModsPage extends PageBase {
         this.initCancelDownloadBtn();
         this.initCloseBtn();
         this.initSearch();
+        this.moveToLocalMods();
     }
 
     private searchMods = async (query: string): Promise<SearchResultHit[]> => {
@@ -203,29 +204,54 @@ class ModsPage extends PageBase {
         });
     }
 
+    moveToLocalMods = () => {
+        const hrefMod = document.getElementById('href-mods') as HTMLAnchorElement
+        hrefMod.addEventListener('click', () => {
+            const el = document.getElementById("installed-mods-title")
+            if (el) el.scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    }
+
     dowloadMod = async () => {
         try {
+            const downloadLoadingModal = document.getElementById('loading') as HTMLDivElement;
+            const loadingText = document.getElementById('loading-text') as HTMLParagraphElement;
+
+            loadingText.innerHTML = 'Iniciando download...';
+            downloadLoadingModal.classList.remove('hidden');
+            downloadLoadingModal.classList.add('flex');
+
             const modId = this.selectedModId;
             if (!modId) {
                 this.notification("Nenhum mod selecionado para download.");
+                downloadLoadingModal.classList.add('hidden');
+                downloadLoadingModal.classList.remove('flex');
                 return;
             }
+
             const mod = await this.client.getProject(modId);
+
+
+            loadingText.innerHTML = `Baixando o mod ${mod.title}...`;
+
+
             const versions = await this.client.getProjectVersions(modId);
 
             if (versions.length === 0) {
                 this.notification("Nenhuma versão compatível encontrada para os critérios selecionados.");
+                downloadLoadingModal.classList.add('hidden');
+                downloadLoadingModal.classList.remove('flex');
                 return;
             }
             const latestVersion = versions[0];
             if (latestVersion.files.length === 0) {
                 this.notification("Nenhum arquivo encontrado para a versão do mod: " + latestVersion.name);
+                downloadLoadingModal.classList.add('hidden');
+                downloadLoadingModal.classList.remove('flex');
                 return;
             }
-
-            const downloadLoadingModal = document.getElementById('download-animation') as HTMLDivElement;
-            downloadLoadingModal.classList.remove('hidden');
-            downloadLoadingModal.classList.add('relative');
 
             const versionSelect = document.getElementById('install-game-version') as HTMLSelectElement;
             const loaderSelect = document.getElementById('install-loader') as HTMLSelectElement;
@@ -243,6 +269,8 @@ class ModsPage extends PageBase {
 
             if (!versao) {
                 this.notification("Nenhuma versão compatível encontrada para os critérios selecionados.");
+                downloadLoadingModal.classList.add('hidden');
+                downloadLoadingModal.classList.remove('flex');
                 return;
             }
 
@@ -259,14 +287,17 @@ class ModsPage extends PageBase {
             }
 
             fs.writeFileSync(join(instancesPath, "mods", arquivo.filename), Buffer.from(buffer));
-            this.notification(`Mod ${mod.title} baixado com sucesso para o diretorio ${join(instancesPath, "mods")}`);
+            this.notification(`Mod ${mod.title} baixado com sucesso.`);
             this.refreshMods();
             downloadLoadingModal.classList.add('hidden');
-            downloadLoadingModal.classList.remove('relative');
+            downloadLoadingModal.classList.remove('flex');
 
 
         } catch (error) {
             console.error("Erro ao baixar o mod:", error);
+            const downloadLoadingModal = document.getElementById('loading') as HTMLDivElement;
+            downloadLoadingModal.classList.add('hidden');
+            downloadLoadingModal.classList.remove('flex');
         }
     }
 
@@ -394,7 +425,7 @@ class ModsPage extends PageBase {
 
         const logo = document.createElement("img");
         logo.className = "w-12 h-12 mr-4 rounded-md";
-        
+
         const loader = document.createElement("span");
         loader.className = "text-sm text-zinc-400";
         loader.innerText = `Loader: ${mod.loader}`;

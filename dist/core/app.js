@@ -25,6 +25,7 @@ class App {
     setup() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("[CLIENT SIDE] O CLASSE PRINCIPAL DO APP FOI CARREGADA");
+            window.resizeTo(1200, 700);
             yield this.initPages([home_js_1.HomePage]);
             yield this.initPages([accounts_js_1.AccountsPage]);
             yield this.initPages([config_js_1.ConfigPage]);
@@ -38,7 +39,8 @@ class App {
     }
     removeLoad() {
         const loading = document.getElementById('loading');
-        loading.remove();
+        loading.classList.add('hidden');
+        loading.classList.remove('flex');
     }
     initPages(pages) {
         return __awaiter(this, void 0, void 0, function* () {

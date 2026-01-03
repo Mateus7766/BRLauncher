@@ -13,6 +13,7 @@ import path from "path"
 class App {
     async setup() {
         console.log("[CLIENT SIDE] O CLASSE PRINCIPAL DO APP FOI CARREGADA")
+        window.resizeTo(1200, 700);
         await this.initPages([HomePage])
         await this.initPages([AccountsPage])
         await this.initPages([ConfigPage])
@@ -26,7 +27,8 @@ class App {
 
     private removeLoad(){
         const loading = document.getElementById('loading') as HTMLDivElement
-        loading.remove()
+        loading.classList.add('hidden')
+        loading.classList.remove('flex')
     }
 
     private async initPages<T extends PageBase>(pages: (new () => T)[]) {

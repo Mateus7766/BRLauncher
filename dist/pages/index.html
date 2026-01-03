@@ -17,13 +17,13 @@
     </style>
 </head>
 
-<body class="bg-zinc-700 flex flex-col h-screen select-none" id="body">
+<body class="bg-zinc-700 flex flex-col h-screen select-none scroll-smooth" id="body">
     <div id="loading" class="absolute w-full h-full backdrop-blur-xl z-30 flex items-center justify-center">
         <div class="flex items-center justify-center flex-col gap-5">
             <div
                 class="w-14 h-14 font-bold border-4 border-transparent border-t-red-500 border-r-red-500 rounded-full animate-spin">
             </div>
-            <p class="text-white text-center animate-pulse">Carregando a interface...</p>
+            <p class="text-white text-center animate-pulse" id="loading-text">Carregando a interface...</p>
         </div>
     </div>
     <div id="playing" class="absolute w-full h-full backdrop-blur-xl z-30 items-center justify-center hidden">
