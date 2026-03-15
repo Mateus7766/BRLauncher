@@ -14,6 +14,7 @@ class App {
     async setup() {
         console.log("[CLIENT SIDE] O CLASSE PRINCIPAL DO APP FOI CARREGADA")
         window.resizeTo(1200, 700);
+        this.setupThemeToggle()
         await this.initPages([HomePage])
         await this.initPages([AccountsPage])
         await this.initPages([ConfigPage])
@@ -29,6 +30,35 @@ class App {
         const loading = document.getElementById('loading') as HTMLDivElement
         loading.classList.add('hidden')
         loading.classList.remove('flex')
+    }
+
+    private setupThemeToggle() {
+        const body = document.getElementById('body') as HTMLBodyElement
+        if (!body) return
+
+        const toggle = document.getElementById('theme-toggle') as HTMLButtonElement | null
+        const icon = document.getElementById('theme-toggle-icon') as HTMLElement | null
+        const label = document.getElementById('theme-toggle-label') as HTMLElement | null
+        const chip = document.getElementById('theme-toggle-chip') as HTMLElement | null
+
+        const applyTheme = (theme: 'light' | 'dark') => {
+            const isLight = theme === 'light'
+            body.classList.toggle('theme-light', isLight)
+            localStorage.setItem('brlauncher-theme', theme)
+
+            if (icon) icon.textContent = isLight ? 'dark_mode' : 'light_mode'
+            if (label) label.textContent = isLight ? 'Modo escuro' : 'Modo claro'
+            if (chip) chip.textContent = isLight ? 'CLARO' : 'ESCURO'
+        }
+
+        const savedTheme = localStorage.getItem('brlauncher-theme')
+        applyTheme(savedTheme === 'light' ? 'light' : 'dark')
+
+        if (!toggle) return
+        toggle.addEventListener('click', () => {
+            const isLight = body.classList.contains('theme-light')
+            applyTheme(isLight ? 'dark' : 'light')
+        })
     }
 
     private async initPages<T extends PageBase>(pages: (new () => T)[]) {
@@ -60,6 +90,7 @@ class App {
         const sidebar = document.getElementById('sidebar') as HTMLElement
         const sideBarButtons = sidebar.querySelectorAll(".sidebar-button") as NodeListOf<HTMLButtonElement>
         sideBarButtons.forEach((button) => {
+            if (button.id === 'theme-toggle') return
             button.addEventListener("click", (event) => {
                 (sidebar.querySelector(".sidebar-active") as HTMLButtonElement).classList.remove("sidebar-active")
                 button.classList.add("sidebar-active")

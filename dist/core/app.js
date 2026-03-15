@@ -26,6 +26,7 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("[CLIENT SIDE] O CLASSE PRINCIPAL DO APP FOI CARREGADA");
             window.resizeTo(1200, 700);
+            this.setupThemeToggle();
             yield this.initPages([home_js_1.HomePage]);
             yield this.initPages([accounts_js_1.AccountsPage]);
             yield this.initPages([config_js_1.ConfigPage]);
@@ -41,6 +42,34 @@ class App {
         const loading = document.getElementById('loading');
         loading.classList.add('hidden');
         loading.classList.remove('flex');
+    }
+    setupThemeToggle() {
+        const body = document.getElementById('body');
+        if (!body)
+            return;
+        const toggle = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-toggle-icon');
+        const label = document.getElementById('theme-toggle-label');
+        const chip = document.getElementById('theme-toggle-chip');
+        const applyTheme = (theme) => {
+            const isLight = theme === 'light';
+            body.classList.toggle('theme-light', isLight);
+            localStorage.setItem('brlauncher-theme', theme);
+            if (icon)
+                icon.textContent = isLight ? 'dark_mode' : 'light_mode';
+            if (label)
+                label.textContent = isLight ? 'Modo escuro' : 'Modo claro';
+            if (chip)
+                chip.textContent = isLight ? 'CLARO' : 'ESCURO';
+        };
+        const savedTheme = localStorage.getItem('brlauncher-theme');
+        applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+        if (!toggle)
+            return;
+        toggle.addEventListener('click', () => {
+            const isLight = body.classList.contains('theme-light');
+            applyTheme(isLight ? 'dark' : 'light');
+        });
     }
     initPages(pages) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -72,6 +101,8 @@ class App {
             const sidebar = document.getElementById('sidebar');
             const sideBarButtons = sidebar.querySelectorAll(".sidebar-button");
             sideBarButtons.forEach((button) => {
+                if (button.id === 'theme-toggle')
+                    return;
                 button.addEventListener("click", (event) => {
                     sidebar.querySelector(".sidebar-active").classList.remove("sidebar-active");
                     button.classList.add("sidebar-active");

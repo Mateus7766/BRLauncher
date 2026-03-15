@@ -103,10 +103,22 @@
             <button class="sidebar-button" id="about-btn">
                 <p class="flex items-center text-lg"><span class="material-icons mr-4">flag_circle</span> Sobre</p>
             </button>
-            <div class="mt-auto flex items-center bg-zinc-900 p-2 rounded-lg border-2 border-zinc-700 hover:border-zinc-600 transition-colors">
-                <img id="side-avatar" src="../core/imgs/steve.png" width="36">
-                <div class="ml-3 text-sm flex flex-col items-center">
-                    <p id="side-username"></p>
+            <div class="mt-auto flex flex-col gap-2">
+                <button class="theme-toggle-btn" id="theme-toggle" aria-label="Alternar tema claro/escuro">
+                    <div class="flex flex-col">
+                        <div class="theme-toggle-main">
+                            <span class="material-icons" id="theme-toggle-icon">dark_mode</span>
+                            <span id="theme-toggle-label">Modo escuro</span>
+                        </div>
+                        <span class="theme-toggle-hint">Clique para alternar o tema</span>
+                    </div>
+                    <span class="theme-toggle-chip" id="theme-toggle-chip">ON</span>
+                </button>
+                <div class="flex items-center bg-zinc-900 p-2 rounded-lg border-2 border-zinc-700 hover:border-zinc-600 transition-colors">
+                    <img id="side-avatar" src="../core/imgs/steve.png" width="36">
+                    <div class="ml-3 text-sm flex flex-col items-center">
+                        <p id="side-username"></p>
+                    </div>
                 </div>
             </div>
         </aside>
