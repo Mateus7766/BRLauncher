@@ -5,19 +5,31 @@ import { rmdirSync, mkdirSync, rm, readdirSync, rmSync } from "node:fs";
 
 const discord = new DiscordStatusManager()
 
+type InitIPCHandlersOptions = {
+    onStartPlaying?: (version: string) => void
+    onStopPlaying?: () => void
+}
 
-const initIPCHandlers = () => {
+const initIPCHandlers = (mainWindow: BrowserWindow, options: InitIPCHandlersOptions = {}) => {
     ipcMain.handle("minimize", (event) =>
-        BrowserWindow.getFocusedWindow()?.minimize()
+        (BrowserWindow.getFocusedWindow() ?? mainWindow)?.minimize()
     )
-    ipcMain.handle("close", (event) => BrowserWindow.getFocusedWindow()?.close());
+    ipcMain.handle("close", (event) => (BrowserWindow.getFocusedWindow() ?? mainWindow)?.close());
     ipcMain.handle("maxmize", (event) =>
-        !BrowserWindow.getFocusedWindow()?.isMaximized() ? BrowserWindow.getFocusedWindow()?.maximize() : BrowserWindow.getFocusedWindow()?.unmaximize()
+        !(BrowserWindow.getFocusedWindow() ?? mainWindow)?.isMaximized()
+            ? (BrowserWindow.getFocusedWindow() ?? mainWindow)?.maximize()
+            : (BrowserWindow.getFocusedWindow() ?? mainWindow)?.unmaximize()
     );
 
-    ipcMain.handle("stopPlaying", () => discord.setStatusPage('Acabou de fechar o Minecraft'));
+    ipcMain.handle("stopPlaying", () => {
+        options.onStopPlaying?.()
+        return discord.setStatusPage('Acabou de fechar o Minecraft')
+    });
     ipcMain.handle("changedPage", (event, page) => discord.setStatusPage(page));
-    ipcMain.handle("playing", (event, version) => discord.setPlaying(version));
+    ipcMain.handle("playing", (event, version) => {
+        options.onStartPlaying?.(version)
+        return discord.setPlaying(version)
+    });
     ipcMain.handle('fileExplorer', (event) => {
         const path = dialog.showOpenDialogSync({
             properties: ['openDirectory']

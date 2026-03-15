@@ -15,13 +15,26 @@ const discordStatus_js_1 = require("./discordStatus.js");
 const minecraft_java_core_1 = require("minecraft-java-core");
 const node_fs_1 = require("node:fs");
 const discord = new discordStatus_js_1.DiscordStatusManager();
-const initIPCHandlers = () => {
-    electron_1.ipcMain.handle("minimize", (event) => { var _a; return (_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.minimize(); });
-    electron_1.ipcMain.handle("close", (event) => { var _a; return (_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.close(); });
-    electron_1.ipcMain.handle("maxmize", (event) => { var _a, _b, _c; return !((_a = electron_1.BrowserWindow.getFocusedWindow()) === null || _a === void 0 ? void 0 : _a.isMaximized()) ? (_b = electron_1.BrowserWindow.getFocusedWindow()) === null || _b === void 0 ? void 0 : _b.maximize() : (_c = electron_1.BrowserWindow.getFocusedWindow()) === null || _c === void 0 ? void 0 : _c.unmaximize(); });
-    electron_1.ipcMain.handle("stopPlaying", () => discord.setStatusPage('Acabou de fechar o Minecraft'));
+const initIPCHandlers = (mainWindow, options = {}) => {
+    electron_1.ipcMain.handle("minimize", (event) => { var _a, _b; return (_b = ((_a = electron_1.BrowserWindow.getFocusedWindow()) !== null && _a !== void 0 ? _a : mainWindow)) === null || _b === void 0 ? void 0 : _b.minimize(); });
+    electron_1.ipcMain.handle("close", (event) => { var _a, _b; return (_b = ((_a = electron_1.BrowserWindow.getFocusedWindow()) !== null && _a !== void 0 ? _a : mainWindow)) === null || _b === void 0 ? void 0 : _b.close(); });
+    electron_1.ipcMain.handle("maxmize", (event) => {
+        var _a, _b, _c, _d, _e, _f;
+        return !((_b = ((_a = electron_1.BrowserWindow.getFocusedWindow()) !== null && _a !== void 0 ? _a : mainWindow)) === null || _b === void 0 ? void 0 : _b.isMaximized())
+            ? (_d = ((_c = electron_1.BrowserWindow.getFocusedWindow()) !== null && _c !== void 0 ? _c : mainWindow)) === null || _d === void 0 ? void 0 : _d.maximize()
+            : (_f = ((_e = electron_1.BrowserWindow.getFocusedWindow()) !== null && _e !== void 0 ? _e : mainWindow)) === null || _f === void 0 ? void 0 : _f.unmaximize();
+    });
+    electron_1.ipcMain.handle("stopPlaying", () => {
+        var _a;
+        (_a = options.onStopPlaying) === null || _a === void 0 ? void 0 : _a.call(options);
+        return discord.setStatusPage('Acabou de fechar o Minecraft');
+    });
     electron_1.ipcMain.handle("changedPage", (event, page) => discord.setStatusPage(page));
-    electron_1.ipcMain.handle("playing", (event, version) => discord.setPlaying(version));
+    electron_1.ipcMain.handle("playing", (event, version) => {
+        var _a;
+        (_a = options.onStartPlaying) === null || _a === void 0 ? void 0 : _a.call(options, version);
+        return discord.setPlaying(version);
+    });
     electron_1.ipcMain.handle('fileExplorer', (event) => {
         const path = electron_1.dialog.showOpenDialogSync({
             properties: ['openDirectory']

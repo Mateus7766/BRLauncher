@@ -270,6 +270,7 @@ class HomePage extends PageBase {
                 barra.style.width = '100%'
                 if (data.includes("Launching")) {
                     ipcRenderer.invoke("playing", `${type} ${version}`)
+                    ipcRenderer.invoke("hideToTray")
                     const isPlaying = document.getElementById("playing") as HTMLDivElement
                     setTimeout(() => {
                         isPlaying.classList.remove("hidden")
@@ -286,6 +287,7 @@ class HomePage extends PageBase {
                 play.disabled = false
                 play.innerHTML = '<span class="material-icons">play_circle</span> Instalar e Jogar'
                 ipcRenderer.invoke("stopPlaying")
+                ipcRenderer.invoke("restoreFromTray")
 
                 const isPlaying = document.getElementById("playing") as HTMLDivElement
                 isPlaying.classList.add("hidden")
